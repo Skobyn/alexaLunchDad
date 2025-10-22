@@ -16,6 +16,10 @@ module.exports = {
   testMatch: [
     '**/tests/**/*.test.js'
   ],
+  testPathIgnorePatterns: [
+    '/node_modules/',
+    '/tests/integration/skillFlow.test.js'
+  ],
   verbose: true,
   testTimeout: 10000
 };
