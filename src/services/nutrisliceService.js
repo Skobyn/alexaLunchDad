@@ -111,14 +111,17 @@ async function getMenuForDate(date) {
             if (dayData && dayData.menu_items && dayData.menu_items.length > 0) {
                 console.log(`[NutrisliceService] Found ${dayData.menu_items.length} menu items`);
 
-                // Extract menu items
+                // Extract menu items - format for menuParser compatibility
                 const items = dayData.menu_items
                     .filter(item => item.food && item.food.name)
                     .map(item => ({
                         name: item.food.name,
                         description: item.food.description || '',
-                        calories: item.food.rounded_nutrition_info?.calories || null,
-                        protein: item.food.rounded_nutrition_info?.g_protein || null,
+                        category: item.food.food_category || 'Other',
+                        nutrients: {
+                            calories: item.food.rounded_nutrition_info?.calories || 0,
+                            protein: item.food.rounded_nutrition_info?.g_protein || 0
+                        },
                         imageUrl: item.food.image_url || null
                     }));
 
