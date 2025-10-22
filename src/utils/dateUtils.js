@@ -16,16 +16,16 @@ const constants = require('./constants');
  * formatDateForNutrislice(new Date('2025-10-20')) // '2025-10-20'
  */
 function formatDateForNutrislice(date) {
-  // Validate input
-  if (!date || !(date instanceof Date) || isNaN(date.getTime())) {
-    throw new Error('Invalid date provided');
-  }
+    // Validate input
+    if (!date || !(date instanceof Date) || isNaN(date.getTime())) {
+        throw new Error('Invalid date provided');
+    }
 
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
 
-  return `${year}-${month}-${day}`;
+    return `${year}-${month}-${day}`;
 }
 
 /**
@@ -40,24 +40,24 @@ function formatDateForNutrislice(date) {
  * isSchoolDay(new Date('2025-10-25')) // false (Saturday)
  */
 function isSchoolDay(date) {
-  // Validate input
-  if (!date || !(date instanceof Date) || isNaN(date.getTime())) {
-    throw new Error('Invalid date provided');
-  }
+    // Validate input
+    if (!date || !(date instanceof Date) || isNaN(date.getTime())) {
+        throw new Error('Invalid date provided');
+    }
 
-  // Check if weekend (0 = Sunday, 6 = Saturday)
-  const dayOfWeek = date.getDay();
-  if (dayOfWeek === 0 || dayOfWeek === 6) {
-    return false;
-  }
+    // Check if weekend (0 = Sunday, 6 = Saturday)
+    const dayOfWeek = date.getDay();
+    if (dayOfWeek === 0 || dayOfWeek === 6) {
+        return false;
+    }
 
-  // Check if holiday
-  const dateString = formatDateForNutrislice(date);
-  if (constants.HOLIDAYS.includes(dateString)) {
-    return false;
-  }
+    // Check if holiday
+    const dateString = formatDateForNutrislice(date);
+    if (constants.HOLIDAYS.includes(dateString)) {
+        return false;
+    }
 
-  return true;
+    return true;
 }
 
 /**
@@ -71,31 +71,31 @@ function isSchoolDay(date) {
  * getTodayInTimezone('America/New_York') // Date object for today at 00:00:00
  */
 function getTodayInTimezone(timezone = constants.TIMEZONE) {
-  // Validate timezone by attempting to use it
-  try {
-    const now = new Date();
+    // Validate timezone by attempting to use it
+    try {
+        const now = new Date();
 
-    // Get date string in the target timezone
-    const dateString = now.toLocaleString('en-US', {
-      timeZone: timezone,
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour12: false
-    });
+        // Get date string in the target timezone
+        const dateString = now.toLocaleString('en-US', {
+            timeZone: timezone,
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour12: false
+        });
 
-    // Parse the date string to extract components
-    const [datePart] = dateString.split(', ');
-    const [month, day, year] = datePart.split('/');
+        // Parse the date string to extract components
+        const [datePart] = dateString.split(', ');
+        const [month, day, year] = datePart.split('/');
 
-    // Create date at midnight in local time
-    // This represents the start of the day in the target timezone
-    const result = new Date(year, month - 1, day, 0, 0, 0, 0);
+        // Create date at midnight in local time
+        // This represents the start of the day in the target timezone
+        const result = new Date(year, month - 1, day, 0, 0, 0, 0);
 
-    return result;
-  } catch (error) {
-    throw new Error(`Invalid timezone: ${timezone}`);
-  }
+        return result;
+    } catch (error) {
+        throw new Error(`Invalid timezone: ${timezone}`);
+    }
 }
 
 /**
@@ -112,52 +112,52 @@ function getTodayInTimezone(timezone = constants.TIMEZONE) {
  * getNextSchoolDay(new Date('2025-10-20'), 0) // Same day if already school day
  */
 function getNextSchoolDay(currentDate, daysAhead = 1) {
-  // Constants
-  const MAX_ITERATIONS = 365;
+    // Constants
+    const MAX_ITERATIONS = 365;
 
-  // Validate inputs
-  if (!currentDate || !(currentDate instanceof Date) || isNaN(currentDate.getTime())) {
-    throw new Error('Invalid date provided');
-  }
-
-  if (daysAhead < 0) {
-    throw new Error('daysAhead must be non-negative');
-  }
-
-  // Special case: 0 days ahead returns current date
-  if (daysAhead === 0) {
-    return new Date(currentDate);
-  }
-
-  // Initialize working date
-  let workingDate = new Date(currentDate);
-  let schoolDaysFound = 0;
-  let iterationCount = 0;
-
-  // Advance until we find required school days
-  while (schoolDaysFound < daysAhead && iterationCount < MAX_ITERATIONS) {
-    // Move to next calendar day
-    workingDate = new Date(workingDate);
-    workingDate.setDate(workingDate.getDate() + 1);
-    iterationCount++;
-
-    // Check if it's a school day (not weekend, not holiday)
-    if (isSchoolDay(workingDate)) {
-      schoolDaysFound++;
+    // Validate inputs
+    if (!currentDate || !(currentDate instanceof Date) || isNaN(currentDate.getTime())) {
+        throw new Error('Invalid date provided');
     }
-  }
 
-  // Safety check
-  if (iterationCount >= MAX_ITERATIONS) {
-    throw new Error('Could not find school day within reasonable time');
-  }
+    if (daysAhead < 0) {
+        throw new Error('daysAhead must be non-negative');
+    }
 
-  return workingDate;
+    // Special case: 0 days ahead returns current date
+    if (daysAhead === 0) {
+        return new Date(currentDate);
+    }
+
+    // Initialize working date
+    let workingDate = new Date(currentDate);
+    let schoolDaysFound = 0;
+    let iterationCount = 0;
+
+    // Advance until we find required school days
+    while (schoolDaysFound < daysAhead && iterationCount < MAX_ITERATIONS) {
+    // Move to next calendar day
+        workingDate = new Date(workingDate);
+        workingDate.setDate(workingDate.getDate() + 1);
+        iterationCount++;
+
+        // Check if it's a school day (not weekend, not holiday)
+        if (isSchoolDay(workingDate)) {
+            schoolDaysFound++;
+        }
+    }
+
+    // Safety check
+    if (iterationCount >= MAX_ITERATIONS) {
+        throw new Error('Could not find school day within reasonable time');
+    }
+
+    return workingDate;
 }
 
 module.exports = {
-  formatDateForNutrislice,
-  isSchoolDay,
-  getTodayInTimezone,
-  getNextSchoolDay
+    formatDateForNutrislice,
+    isSchoolDay,
+    getTodayInTimezone,
+    getNextSchoolDay
 };
