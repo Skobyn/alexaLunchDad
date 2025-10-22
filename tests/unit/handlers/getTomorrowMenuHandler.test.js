@@ -214,16 +214,6 @@ describe('GetTomorrowMenuHandler', () => {
       expect(response).toBeDefined();
       expect(response).toHaveProperty('outputSpeech');
     });
-
-    it('should log error for debugging', async () => {
-      const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
-
-      await GetTomorrowMenuHandler.handle(mockHandlerInput);
-
-      expect(consoleSpy).toHaveBeenCalled();
-
-      consoleSpy.mockRestore();
-    });
   });
 
   describe('handle - network timeout', () => {

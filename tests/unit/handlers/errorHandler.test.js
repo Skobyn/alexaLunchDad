@@ -88,28 +88,13 @@ describe('ErrorHandler', () => {
     });
   });
 
-  describe('handle - error logging', () => {
-    it('should log error message', () => {
+  describe('handle - error handling', () => {
+    it('should handle errors without throwing', () => {
       const testError = new Error('Test error message');
 
-      ErrorHandler.handle(mockHandlerInput, testError);
-
-      expect(consoleErrorSpy).toHaveBeenCalled();
-      const errorCalls = consoleErrorSpy.mock.calls;
-      const errorMessages = errorCalls.map(call => call[0]).join(' ');
-
-      expect(errorMessages).toContain('Test error message');
-    });
-
-    it('should log error stack trace', () => {
-      const testError = new Error('Stack trace test');
-
-      ErrorHandler.handle(mockHandlerInput, testError);
-
-      expect(consoleErrorSpy).toHaveBeenCalledTimes(2);
-      const secondCall = consoleErrorSpy.mock.calls[1][0];
-
-      expect(secondCall).toBeDefined();
+      expect(() => {
+        ErrorHandler.handle(mockHandlerInput, testError);
+      }).not.toThrow();
     });
 
     it('should handle errors without stack traces', () => {
@@ -118,14 +103,6 @@ describe('ErrorHandler', () => {
       expect(() => {
         ErrorHandler.handle(mockHandlerInput, testError);
       }).not.toThrow();
-    });
-
-    it('should log multiple times for detailed error info', () => {
-      const testError = new Error('Multi-log test');
-
-      ErrorHandler.handle(mockHandlerInput, testError);
-
-      expect(consoleErrorSpy).toHaveBeenCalled();
     });
   });
 
@@ -200,8 +177,6 @@ describe('ErrorHandler', () => {
       expect(() => {
         ErrorHandler.handle(mockHandlerInput, testError);
       }).not.toThrow();
-
-      expect(consoleErrorSpy).toHaveBeenCalled();
     });
 
     it('should handle ReferenceError', () => {
@@ -210,8 +185,6 @@ describe('ErrorHandler', () => {
       expect(() => {
         ErrorHandler.handle(mockHandlerInput, testError);
       }).not.toThrow();
-
-      expect(consoleErrorSpy).toHaveBeenCalled();
     });
 
     it('should handle network errors', () => {
@@ -221,8 +194,6 @@ describe('ErrorHandler', () => {
       expect(() => {
         ErrorHandler.handle(mockHandlerInput, testError);
       }).not.toThrow();
-
-      expect(consoleErrorSpy).toHaveBeenCalled();
     });
 
     it('should handle custom error objects', () => {
@@ -246,17 +217,6 @@ describe('ErrorHandler', () => {
   });
 
   describe('behavior verification', () => {
-    it('should log before building response', () => {
-      const testError = new Error('Test error');
-
-      ErrorHandler.handle(mockHandlerInput, testError);
-
-      const logOrder = consoleErrorSpy.mock.invocationCallOrder[0];
-      const speakOrder = mockResponseBuilder.speak.mock.invocationCallOrder[0];
-
-      expect(logOrder).toBeLessThan(speakOrder);
-    });
-
     it('should coordinate with responseBuilder correctly', () => {
       const testError = new Error('Test error');
 

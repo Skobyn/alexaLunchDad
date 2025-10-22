@@ -7,11 +7,13 @@ const GetTomorrowMenuHandler = require('../../../src/intents/GetTomorrowMenuHand
 
 // Mock dependencies
 jest.mock('../../../src/services/nutrisliceService');
+jest.mock('../../../src/services/weatherService');
 jest.mock('../../../src/utils/menuParser');
 jest.mock('../../../src/utils/dateUtils');
 jest.mock('../../../src/utils/constants');
 
 const nutrisliceService = require('../../../src/services/nutrisliceService');
+const weatherService = require('../../../src/services/weatherService');
 const menuParser = require('../../../src/utils/menuParser');
 const dateUtils = require('../../../src/utils/dateUtils');
 const constants = require('../../../src/utils/constants');
@@ -90,6 +92,11 @@ describe('GetTomorrowMenuHandler', () => {
 
       dateUtils.getNextSchoolDay.mockReturnValue(mockTomorrow);
       nutrisliceService.getMenuForTomorrow.mockResolvedValue(mockMenuData);
+      weatherService.getTodayWeather.mockResolvedValue({
+        current: { temperature: 48, temperatureUnit: 'F', conditions: 'Cloudy', isDaytime: true },
+        today: { high: 50, temperatureUnit: 'F', detailedForecast: 'Cloudy. High near 50, with temperatures falling to around 48 in the afternoon. West northwest wind around 15 mph, with gusts as high as 25 mph', shortForecast: 'Cloudy' },
+        isFallback: false
+      });
       menuParser.extractMainItems.mockReturnValue(mockMainItems);
       menuParser.formatMenuItems.mockReturnValue('Spaghetti');
 
@@ -101,8 +108,12 @@ describe('GetTomorrowMenuHandler', () => {
       expect(menuParser.extractMainItems).toHaveBeenCalledWith(mockMenuData);
       expect(menuParser.formatMenuItems).toHaveBeenCalledWith(mockMainItems);
 
+      // Should include both weather and menu
       expect(handlerInput.responseBuilder.speak).toHaveBeenCalledWith(
-        "Tomorrow's lunch menu includes Spaghetti."
+        expect.stringContaining("Tomorrow's lunch menu includes Spaghetti")
+      );
+      expect(handlerInput.responseBuilder.speak).toHaveBeenCalledWith(
+        expect.stringContaining('Currently it is 48 degrees')
       );
     });
 
@@ -208,15 +219,23 @@ describe('GetTomorrowMenuHandler', () => {
 
       dateUtils.getNextSchoolDay.mockReturnValue(mockTomorrow);
       nutrisliceService.getMenuForTomorrow.mockResolvedValue(mockMenuData);
+      weatherService.getTodayWeather.mockResolvedValue({
+        current: { temperature: 48, temperatureUnit: 'F', conditions: 'Cloudy', isDaytime: true },
+        today: { high: 50, temperatureUnit: 'F', detailedForecast: 'Cloudy. High near 50, with temperatures falling to around 48 in the afternoon. West northwest wind around 15 mph, with gusts as high as 25 mph', shortForecast: 'Cloudy' },
+        isFallback: false
+      });
       menuParser.extractMainItems.mockReturnValue(mockMainItems);
       menuParser.formatMenuItems.mockReturnValue('Pizza and Burger');
 
       // Act
       await GetTomorrowMenuHandler.handle(handlerInput);
 
-      // Assert
+      // Assert - Should include both weather and menu
       expect(handlerInput.responseBuilder.speak).toHaveBeenCalledWith(
-        "Tomorrow's lunch menu includes Pizza and Burger."
+        expect.stringContaining("Tomorrow's lunch menu includes Pizza and Burger")
+      );
+      expect(handlerInput.responseBuilder.speak).toHaveBeenCalledWith(
+        expect.stringContaining('Currently it is 48 degrees')
       );
     });
   });

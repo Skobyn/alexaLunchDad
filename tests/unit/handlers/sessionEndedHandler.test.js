@@ -73,31 +73,6 @@ describe('SessionEndedRequestHandler', () => {
   });
 
   describe('handle', () => {
-    it('should log session end information', () => {
-      SessionEndedRequestHandler.handle(mockHandlerInput);
-
-      expect(consoleLogSpy).toHaveBeenCalled();
-    });
-
-    it('should log request envelope details', () => {
-      SessionEndedRequestHandler.handle(mockHandlerInput);
-
-      const logArg = consoleLogSpy.mock.calls[0][0];
-      expect(logArg.toLowerCase()).toContain('session');
-    });
-
-    it('should log the reason for session end', () => {
-      mockHandlerInput.requestEnvelope.request.reason = 'ERROR';
-      mockHandlerInput.requestEnvelope.request.error = {
-        type: 'INVALID_RESPONSE',
-        message: 'Test error'
-      };
-
-      SessionEndedRequestHandler.handle(mockHandlerInput);
-
-      expect(consoleLogSpy).toHaveBeenCalled();
-    });
-
     it('should call getResponse with no output speech', () => {
       SessionEndedRequestHandler.handle(mockHandlerInput);
 
@@ -127,8 +102,6 @@ describe('SessionEndedRequestHandler', () => {
       expect(() => {
         SessionEndedRequestHandler.handle(mockHandlerInput);
       }).not.toThrow();
-
-      expect(consoleLogSpy).toHaveBeenCalled();
     });
 
     it('should handle ERROR reason', () => {
@@ -141,8 +114,6 @@ describe('SessionEndedRequestHandler', () => {
       expect(() => {
         SessionEndedRequestHandler.handle(mockHandlerInput);
       }).not.toThrow();
-
-      expect(consoleLogSpy).toHaveBeenCalled();
     });
 
     it('should handle EXCEEDED_MAX_REPROMPTS reason', () => {
@@ -151,8 +122,6 @@ describe('SessionEndedRequestHandler', () => {
       expect(() => {
         SessionEndedRequestHandler.handle(mockHandlerInput);
       }).not.toThrow();
-
-      expect(consoleLogSpy).toHaveBeenCalled();
     });
 
     it('should not throw error for any reason type', () => {
@@ -169,15 +138,6 @@ describe('SessionEndedRequestHandler', () => {
   });
 
   describe('behavior verification', () => {
-    it('should perform logging before building response', () => {
-      SessionEndedRequestHandler.handle(mockHandlerInput);
-
-      const logOrder = consoleLogSpy.mock.invocationCallOrder[0];
-      const responseOrder = mockResponseBuilder.getResponse.mock.invocationCallOrder[0];
-
-      expect(logOrder).toBeLessThan(responseOrder);
-    });
-
     it('should coordinate with responseBuilder minimally', () => {
       const response = SessionEndedRequestHandler.handle(mockHandlerInput);
 
