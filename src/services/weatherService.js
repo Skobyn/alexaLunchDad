@@ -200,8 +200,16 @@ async function getTodayWeather() {
         // Step 3: Get current conditions (first hourly period)
         const currentConditions = hourlyForecast.properties.periods[0];
 
-        // Step 4: Get today's daily forecast
-        const todayForecast = dailyForecast.properties.periods[0];
+        // Step 4: Get today's daily forecast (find "Today" period, not "Tonight")
+        const dailyPeriods = dailyForecast.properties.periods;
+        const todayForecast = dailyPeriods.find(period =>
+            period.name === 'Today' || period.isDaytime === true
+        ) || dailyPeriods[0];
+
+        // Strip quotes from forecast text to prevent SSML errors
+        const cleanForecast = todayForecast.detailedForecast
+            .replace(/"/g, '')  // Remove double quotes
+            .replace(/'/g, ''); // Remove single quotes
 
         return {
             current: {
@@ -213,7 +221,7 @@ async function getTodayWeather() {
             today: {
                 high: todayForecast.temperature,
                 temperatureUnit: todayForecast.temperatureUnit,
-                detailedForecast: todayForecast.detailedForecast,
+                detailedForecast: cleanForecast,
                 shortForecast: todayForecast.shortForecast
             },
             isFallback: false

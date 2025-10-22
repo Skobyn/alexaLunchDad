@@ -1,0 +1,72 @@
+{
+  "interactionModel": {
+    "languageModel": {
+      "invocationName": "lunch dad",
+      "intents": [
+        {
+          "name": "AMAZON.CancelIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.HelpIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.StopIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.NavigateHomeIntent",
+          "samples": []
+        },
+        {
+          "name": "GetTodayMenuIntent",
+          "slots": [],
+          "samples": [
+            "what's for lunch today",
+            "what is for lunch today",
+            "today's lunch",
+            "what are they serving today",
+            "what's on the menu today",
+            "tell me today's lunch",
+            "what's lunch today",
+            "today's menu",
+            "what is on the menu today",
+            "what do they have today",
+            "what's being served today",
+            "show me today's menu",
+            "what is today's lunch",
+            "lunch menu for today",
+            "today",
+            "what's for lunch",
+            "what is for lunch"
+          ]
+        },
+        {
+          "name": "GetTomorrowMenuIntent",
+          "slots": [],
+          "samples": [
+            "what's for lunch tomorrow",
+            "what is for lunch tomorrow",
+            "tomorrow's lunch",
+            "what are they serving tomorrow",
+            "what's on the menu tomorrow",
+            "tell me tomorrow's lunch",
+            "what's lunch tomorrow",
+            "tomorrow's menu",
+            "what is on the menu tomorrow",
+            "what do they have tomorrow",
+            "what's being served tomorrow",
+            "show me tomorrow's menu",
+            "what is tomorrow's lunch",
+            "lunch menu for tomorrow",
+            "tomorrow",
+            "next day's menu",
+            "what will be served tomorrow"
+          ]
+        }
+      ],
+      "types": []
+    }
+  }
+}

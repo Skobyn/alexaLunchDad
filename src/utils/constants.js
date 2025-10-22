@@ -16,7 +16,7 @@ module.exports = {
         BASE_URL: 'https://api.weather.gov',
         LAT: process.env.WEATHER_LAT || '39.0997',
         LON: process.env.WEATHER_LON || '-77.0941',
-        TIMEOUT_MS: 3000
+        TIMEOUT_MS: 5000 // Increased from 3000ms to reduce timeouts
     },
 
     // Cache TTLs (in seconds)
