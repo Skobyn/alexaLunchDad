@@ -40,45 +40,45 @@
  * const dataSource = buildMenuDataSource(menuCalendar, weatherData);
  */
 function buildMenuDataSource(menuCalendar, weatherData = null) {
-  // Validate input
-  if (!menuCalendar || !menuCalendar.days || !Array.isArray(menuCalendar.days)) {
-    throw new Error('Invalid menu calendar: must have days array');
-  }
+    // Validate input
+    if (!menuCalendar || !menuCalendar.days || !Array.isArray(menuCalendar.days)) {
+        throw new Error('Invalid menu calendar: must have days array');
+    }
 
-  // Get current date for highlighting
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+    // Get current date for highlighting
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-  // Transform menu days for APL
-  const aplDays = menuCalendar.days.map(day => {
-    const dayDate = new Date(day.date);
-    dayDate.setHours(0, 0, 0, 0);
-    const isToday = dayDate.getTime() === today.getTime();
+    // Transform menu days for APL
+    const aplDays = menuCalendar.days.map(day => {
+        const dayDate = new Date(day.date);
+        dayDate.setHours(0, 0, 0, 0);
+        const isToday = dayDate.getTime() === today.getTime();
 
-    // Format date for display (e.g., "Oct 22")
-    const displayDate = formatDisplayDate(dayDate);
+        // Format date for display (e.g., "Oct 22")
+        const displayDate = formatDisplayDate(dayDate);
 
-    // Get short day name (e.g., "Mon", "Tue")
-    const shortDayName = getShortDayName(day.dayOfWeek);
+        // Get short day name (e.g., "Mon", "Tue")
+        const shortDayName = getShortDayName(day.dayOfWeek);
+
+        return {
+            dayName: shortDayName,
+            date: displayDate,
+            menuItems: day.menuItems || [],
+            isToday: isToday,
+            fullDate: day.date
+        };
+    });
+
+    // Build weather data source
+    const aplWeather = buildWeatherData(weatherData);
 
     return {
-      dayName: shortDayName,
-      date: displayDate,
-      menuItems: day.menuItems || [],
-      isToday: isToday,
-      fullDate: day.date
+        menuData: {
+            days: aplDays
+        },
+        weatherData: aplWeather
     };
-  });
-
-  // Build weather data source
-  const aplWeather = buildWeatherData(weatherData);
-
-  return {
-    menuData: {
-      days: aplDays
-    },
-    weatherData: aplWeather
-  };
 }
 
 /**
@@ -88,11 +88,11 @@ function buildMenuDataSource(menuCalendar, weatherData = null) {
  * @returns {string} Formatted date (e.g., "Oct 22")
  */
 function formatDisplayDate(date) {
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  const month = months[date.getMonth()];
-  const day = date.getDate();
-  return `${month} ${day}`;
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const month = months[date.getMonth()];
+    const day = date.getDate();
+    return `${month} ${day}`;
 }
 
 /**
@@ -102,16 +102,16 @@ function formatDisplayDate(date) {
  * @returns {string} Short day name (e.g., "Mon")
  */
 function getShortDayName(fullDayName) {
-  const dayMap = {
-    'Monday': 'Mon',
-    'Tuesday': 'Tue',
-    'Wednesday': 'Wed',
-    'Thursday': 'Thu',
-    'Friday': 'Fri',
-    'Saturday': 'Sat',
-    'Sunday': 'Sun'
-  };
-  return dayMap[fullDayName] || fullDayName.substring(0, 3);
+    const dayMap = {
+        'Monday': 'Mon',
+        'Tuesday': 'Tue',
+        'Wednesday': 'Wed',
+        'Thursday': 'Thu',
+        'Friday': 'Fri',
+        'Saturday': 'Sat',
+        'Sunday': 'Sun'
+    };
+    return dayMap[fullDayName] || fullDayName.substring(0, 3);
 }
 
 /**
@@ -121,19 +121,19 @@ function getShortDayName(fullDayName) {
  * @returns {Object} APL-compatible weather data
  */
 function buildWeatherData(weatherData) {
-  if (!weatherData) {
-    return {
-      temperature: '--°F',
-      conditions: 'N/A',
-      icon: null
-    };
-  }
+    if (!weatherData) {
+        return {
+            temperature: '--°F',
+            conditions: 'N/A',
+            icon: null
+        };
+    }
 
-  return {
-    temperature: formatTemperature(weatherData.temperature),
-    conditions: weatherData.conditions || 'N/A',
-    icon: weatherData.icon || null
-  };
+    return {
+        temperature: formatTemperature(weatherData.temperature),
+        conditions: weatherData.conditions || 'N/A',
+        icon: weatherData.icon || null
+    };
 }
 
 /**
@@ -143,10 +143,10 @@ function buildWeatherData(weatherData) {
  * @returns {string} Formatted temperature (e.g., "72°F")
  */
 function formatTemperature(temperature) {
-  if (temperature === null || temperature === undefined || isNaN(temperature)) {
-    return '--°F';
-  }
-  return `${Math.round(temperature)}°F`;
+    if (temperature === null || temperature === undefined || isNaN(temperature)) {
+        return '--°F';
+    }
+    return `${Math.round(temperature)}°F`;
 }
 
 /**
@@ -157,33 +157,33 @@ function formatTemperature(temperature) {
  * @throws {Error} If data source is invalid
  */
 function validateDataSource(dataSource) {
-  if (!dataSource) {
-    throw new Error('Data source is null or undefined');
-  }
-
-  if (!dataSource.menuData || !dataSource.menuData.days) {
-    throw new Error('Data source missing menuData.days');
-  }
-
-  if (!Array.isArray(dataSource.menuData.days)) {
-    throw new Error('menuData.days must be an array');
-  }
-
-  // Validate each day
-  dataSource.menuData.days.forEach((day, index) => {
-    if (!day.dayName || !day.date) {
-      throw new Error(`Day at index ${index} missing dayName or date`);
+    if (!dataSource) {
+        throw new Error('Data source is null or undefined');
     }
-    if (!Array.isArray(day.menuItems)) {
-      throw new Error(`Day at index ${index} menuItems must be an array`);
+
+    if (!dataSource.menuData || !dataSource.menuData.days) {
+        throw new Error('Data source missing menuData.days');
     }
-  });
 
-  if (!dataSource.weatherData) {
-    throw new Error('Data source missing weatherData');
-  }
+    if (!Array.isArray(dataSource.menuData.days)) {
+        throw new Error('menuData.days must be an array');
+    }
 
-  return true;
+    // Validate each day
+    dataSource.menuData.days.forEach((day, index) => {
+        if (!day.dayName || !day.date) {
+            throw new Error(`Day at index ${index} missing dayName or date`);
+        }
+        if (!Array.isArray(day.menuItems)) {
+            throw new Error(`Day at index ${index} menuItems must be an array`);
+        }
+    });
+
+    if (!dataSource.weatherData) {
+        throw new Error('Data source missing weatherData');
+    }
+
+    return true;
 }
 
 /**
@@ -192,45 +192,45 @@ function validateDataSource(dataSource) {
  * @returns {Object} Sample APL data source
  */
 function createSampleDataSource() {
-  const today = new Date();
-  const sampleDays = [];
+    const today = new Date();
+    const sampleDays = [];
 
-  for (let i = 0; i < 5; i++) {
-    const date = new Date(today);
-    date.setDate(today.getDate() + i);
+    for (let i = 0; i < 5; i++) {
+        const date = new Date(today);
+        date.setDate(today.getDate() + i);
 
-    const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    const dayName = dayNames[date.getDay()];
+        const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        const dayName = dayNames[date.getDay()];
 
-    sampleDays.push({
-      date: date.toISOString().split('T')[0],
-      dayOfWeek: dayName,
-      menuItems: [
-        'Spicy Chicken Sandwich',
-        'Individual Cheese Pizza',
-        'Sun Butter and Jelly Sandwich',
-        'Fresh Fruit Cup'
-      ]
-    });
-  }
+        sampleDays.push({
+            date: date.toISOString().split('T')[0],
+            dayOfWeek: dayName,
+            menuItems: [
+                'Spicy Chicken Sandwich',
+                'Individual Cheese Pizza',
+                'Sun Butter and Jelly Sandwich',
+                'Fresh Fruit Cup'
+            ]
+        });
+    }
 
-  const sampleCalendar = { days: sampleDays };
-  const sampleWeather = {
-    temperature: 72,
-    conditions: 'Sunny',
-    icon: 'https://openweathermap.org/img/wn/01d@2x.png'
-  };
+    const sampleCalendar = { days: sampleDays };
+    const sampleWeather = {
+        temperature: 72,
+        conditions: 'Sunny',
+        icon: 'https://openweathermap.org/img/wn/01d@2x.png'
+    };
 
-  return buildMenuDataSource(sampleCalendar, sampleWeather);
+    return buildMenuDataSource(sampleCalendar, sampleWeather);
 }
 
 // Export functions
 module.exports = {
-  buildMenuDataSource,
-  formatDisplayDate,
-  getShortDayName,
-  buildWeatherData,
-  formatTemperature,
-  validateDataSource,
-  createSampleDataSource
+    buildMenuDataSource,
+    formatDisplayDate,
+    getShortDayName,
+    buildWeatherData,
+    formatTemperature,
+    validateDataSource,
+    createSampleDataSource
 };
