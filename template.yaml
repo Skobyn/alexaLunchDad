@@ -172,12 +172,6 @@ Outputs:
     Export:
       Name: !Sub ${AWS::StackName}-FunctionName
 
-  AlexaLunchDadFunctionIamRole:
-    Description: Implicit IAM Role created for function
-    Value: !GetAtt AlexaLunchDadFunctionRole.Arn
-    Export:
-      Name: !Sub ${AWS::StackName}-FunctionRoleArn
-
   AlexaLunchDadLogGroup:
     Description: CloudWatch Log Group
     Value: !Ref AlexaLunchDadLogGroup
