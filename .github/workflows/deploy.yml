@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - develop
   pull_request:
     branches:
       - main
@@ -33,48 +32,6 @@ jobs:
 
       - name: Run tests
         run: npm test
-
-  deploy-dev:
-    needs: test
-    if: github.ref == 'refs/heads/develop'
-    runs-on: ubuntu-latest
-    environment: development
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Setup AWS SAM
-        uses: aws-actions/setup-sam@v2
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
-
-      - name: SAM Build
-        run: sam build
-
-      - name: SAM Deploy to Dev
-        run: |
-          sam deploy \
-            --no-confirm-changeset \
-            --no-fail-on-empty-changeset \
-            --stack-name alexa-lunch-dad-dev \
-            --parameter-overrides Environment=dev SkillId=${{ secrets.ALEXA_SKILL_ID_DEV }} \
-            --capabilities CAPABILITY_IAM \
-            --region ${{ env.AWS_REGION }} \
-            --resolve-s3
 
   deploy-prod:
     needs: test
