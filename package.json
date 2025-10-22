@@ -7,22 +7,48 @@
     "test": "jest",
     "test:unit": "jest tests/unit",
     "test:integration": "jest tests/integration",
+    "test:coverage": "jest --coverage",
+    "test:watch": "jest --watch",
     "lint": "eslint src/**/*.js",
-    "build": "npm run test && sam build",
-    "deploy:dev": "sam deploy --config-env dev",
+    "lint:fix": "eslint src/**/*.js --fix",
+    "build": "sam build",
+    "build:test": "npm run test && sam build",
+    "validate": "sam validate --lint",
+    "deploy:dev": "sam deploy --config-env dev --no-confirm-changeset",
     "deploy:prod": "sam deploy --config-env prod",
-    "local": "sam local start-api"
+    "deploy:dev:guided": "sam deploy --config-env dev --guided",
+    "deploy:prod:guided": "sam deploy --config-env prod --guided",
+    "logs:dev": "sam logs -n AlexaLunchDad-dev --stack-name alexa-lunch-dad-dev --tail",
+    "logs:prod": "sam logs -n AlexaLunchDad-prod --stack-name alexa-lunch-dad-prod --tail",
+    "logs:dev:filter": "sam logs -n AlexaLunchDad-dev --stack-name alexa-lunch-dad-dev --filter",
+    "logs:prod:filter": "sam logs -n AlexaLunchDad-prod --stack-name alexa-lunch-dad-prod --filter",
+    "local": "sam local start-api",
+    "local:invoke": "sam local invoke AlexaLunchDadFunction --event events/launch.json",
+    "local:invoke:dev": "sam local invoke AlexaLunchDadFunction --event events/launch.json --parameter-overrides Environment=dev",
+    "delete:dev": "sam delete --stack-name alexa-lunch-dad-dev --no-prompts",
+    "delete:prod": "sam delete --stack-name alexa-lunch-dad-prod --no-prompts",
+    "ci:build": "npm ci && npm run test:coverage && sam build",
+    "ci:deploy": "sam deploy --config-env dev --no-confirm-changeset --no-fail-on-empty-changeset"
   },
-  "keywords": ["alexa", "alexa-skill", "lambda", "aws"],
+  "keywords": [
+    "alexa",
+    "alexa-skill",
+    "lambda",
+    "aws"
+  ],
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "ask-sdk-core": "^2.13.0",
-    "ask-sdk-model": "^1.38.0"
+    "ask-sdk-core": "^2.14.0",
+    "ask-sdk-model": "^1.86.0",
+    "axios": "^1.12.2",
+    "cheerio": "^1.1.2"
   },
   "devDependencies": {
-    "jest": "^29.7.0",
+    "@types/jest": "^30.0.0",
+    "claude-flow": "^2.7.0",
     "eslint": "^8.57.0",
-    "claude-flow": "^2.7.0"
+    "jest": "^29.7.0",
+    "nock": "^14.0.10"
   }
 }
