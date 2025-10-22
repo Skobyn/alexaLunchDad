@@ -9,6 +9,7 @@
  */
 
 const nutrisliceService = require('../services/nutrisliceService');
+const weatherService = require('../services/weatherService');
 const menuParser = require('../utils/menuParser');
 const dateUtils = require('../utils/dateUtils');
 const constants = require('../utils/constants');
@@ -37,8 +38,11 @@ const GetTomorrowMenuHandler = {
 
     async handle(handlerInput) {
         try {
-            // Get tomorrow's menu (automatically skips weekends/holidays)
-            const menuData = await nutrisliceService.getMenuForTomorrow();
+            // Fetch tomorrow's menu and weather in parallel
+            const [menuData, weatherData] = await Promise.all([
+                nutrisliceService.getMenuForTomorrow(),
+                weatherService.getTodayWeather().catch(() => null) // Weather is optional
+            ]);
 
             // Calculate which day we're showing (for better UX)
             const today = new Date();
@@ -85,6 +89,23 @@ const GetTomorrowMenuHandler = {
                 // Weekend/holiday case - specify the actual day
                 const dayName = nextSchoolDay.toLocaleDateString('en-US', { weekday: 'long' });
                 speakOutput = `The next school lunch is on ${dayName}, featuring ${safeMenuText}.`;
+            }
+
+            // Add weather context if available
+            if (weatherData && !weatherData.isFallback && weatherData.current) {
+                const currentTemp = weatherData.current.temperature;
+                const currentConditions = weatherData.current.conditions.toLowerCase();
+                const todayHigh = weatherData.today.high;
+                const forecast = weatherData.today.detailedForecast;
+
+                // Build weather message with current + forecast
+                let weatherMsg = `Currently it is ${currentTemp} degrees and ${currentConditions}. `;
+                weatherMsg += `Today's high will be ${todayHigh} degrees. `;
+                // Remove trailing period from forecast if present to avoid double periods
+                const cleanForecast = forecast.endsWith('.') ? forecast.slice(0, -1) : forecast;
+                weatherMsg += `${cleanForecast}. `;
+
+                speakOutput = weatherMsg + speakOutput;
             }
 
             return handlerInput.responseBuilder
