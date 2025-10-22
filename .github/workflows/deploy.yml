@@ -71,7 +71,7 @@ jobs:
             --no-confirm-changeset \
             --no-fail-on-empty-changeset \
             --stack-name alexa-lunch-dad-dev \
-            --parameter-overrides SkillId=${{ secrets.ALEXA_SKILL_ID_DEV }} \
+            --parameter-overrides Environment=dev SkillId=${{ secrets.ALEXA_SKILL_ID_DEV }} \
             --capabilities CAPABILITY_IAM \
             --region ${{ env.AWS_REGION }} \
             --resolve-s3
@@ -138,7 +138,7 @@ jobs:
             --no-confirm-changeset \
             --no-fail-on-empty-changeset \
             --stack-name alexa-lunch-dad-prod \
-            --parameter-overrides SkillId=${{ secrets.ALEXA_SKILL_ID_PROD }} \
+            --parameter-overrides Environment=prod SkillId=${{ secrets.ALEXA_SKILL_ID_PROD }} \
             --capabilities CAPABILITY_IAM \
             --region ${{ env.AWS_REGION }} \
             --resolve-s3
