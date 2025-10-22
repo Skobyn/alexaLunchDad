@@ -2,7 +2,7 @@ const ErrorHandler = {
     canHandle() {
         return true;
     },
-    handle(handlerInput, error) {
+    handle(handlerInput, _error) {
         const speakOutput = 'Sorry, I had trouble processing your request. Please try again.';
 
         return handlerInput.responseBuilder
