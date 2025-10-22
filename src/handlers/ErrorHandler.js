@@ -2,7 +2,8 @@ const ErrorHandler = {
     canHandle() {
         return true;
     },
-    handle(handlerInput, _error) {
+    // eslint-disable-next-line no-unused-vars
+    handle(handlerInput, error) {
         const speakOutput = 'Sorry, I had trouble processing your request. Please try again.';
 
         return handlerInput.responseBuilder
