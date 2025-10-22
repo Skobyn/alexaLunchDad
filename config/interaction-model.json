@@ -1,0 +1,35 @@
+{
+  "interactionModel": {
+    "languageModel": {
+      "invocationName": "lunch dad",
+      "intents": [
+        {
+          "name": "GetLunchIntent",
+          "slots": [],
+          "samples": [
+            "what should I eat",
+            "suggest a lunch",
+            "what should I have for lunch",
+            "give me a lunch idea",
+            "recommend something",
+            "what's for lunch",
+            "help me decide what to eat"
+          ]
+        },
+        {
+          "name": "AMAZON.HelpIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.CancelIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.StopIntent",
+          "samples": []
+        }
+      ],
+      "types": []
+    }
+  }
+}

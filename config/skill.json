@@ -1,0 +1,30 @@
+{
+  "manifest": {
+    "publishingInformation": {
+      "locales": {
+        "en-US": {
+          "summary": "Get lunch recommendations from your Lunch Dad",
+          "examplePhrases": [
+            "Alexa, open lunch dad",
+            "Alexa, ask lunch dad for a suggestion",
+            "Alexa, ask lunch dad what should I eat"
+          ],
+          "name": "Lunch Dad",
+          "description": "Lunch Dad helps you decide what to eat for lunch with fun recommendations."
+        }
+      },
+      "isAvailableWorldwide": true,
+      "testingInstructions": "Ask for lunch recommendations",
+      "category": "FOOD_AND_DRINK",
+      "distributionCountries": []
+    },
+    "apis": {
+      "custom": {
+        "endpoint": {
+          "uri": "arn:aws:lambda:us-east-1:ACCOUNT_ID:function:AlexaLunchDad"
+        }
+      }
+    },
+    "manifestVersion": "1.0"
+  }
+}

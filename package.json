@@ -1,0 +1,28 @@
+{
+  "name": "alexa-lunch-dad",
+  "version": "1.0.0",
+  "description": "Alexa skill for lunch recommendations",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "jest",
+    "test:unit": "jest tests/unit",
+    "test:integration": "jest tests/integration",
+    "lint": "eslint src/**/*.js",
+    "build": "npm run test && sam build",
+    "deploy:dev": "sam deploy --config-env dev",
+    "deploy:prod": "sam deploy --config-env prod",
+    "local": "sam local start-api"
+  },
+  "keywords": ["alexa", "alexa-skill", "lambda", "aws"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "ask-sdk-core": "^2.13.0",
+    "ask-sdk-model": "^1.38.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "eslint": "^8.57.0",
+    "claude-flow": "^2.7.0"
+  }
+}

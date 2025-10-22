@@ -1,0 +1,46 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Alexa Lunch Dad Skill
+
+Globals:
+  Function:
+    Timeout: 10
+    Runtime: nodejs18.x
+    MemorySize: 256
+
+Parameters:
+  SkillId:
+    Type: String
+    Description: Alexa Skill ID
+    Default: ""
+
+Resources:
+  AlexaLunchDadFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: AlexaLunchDad
+      CodeUri: src/
+      Handler: index.handler
+      Description: Alexa skill for lunch recommendations
+      Environment:
+        Variables:
+          LOG_LEVEL: info
+      Events:
+        AlexaSkillEvent:
+          Type: AlexaSkill
+          Properties:
+            SkillId: !Ref SkillId
+
+  AlexaLunchDadLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/lambda/${AlexaLunchDadFunction}
+      RetentionInDays: 7
+
+Outputs:
+  AlexaLunchDadFunction:
+    Description: "Lambda Function ARN"
+    Value: !GetAtt AlexaLunchDadFunction.Arn
+  AlexaLunchDadFunctionIamRole:
+    Description: "Implicit IAM Role created for function"
+    Value: !GetAtt AlexaLunchDadFunctionRole.Arn
