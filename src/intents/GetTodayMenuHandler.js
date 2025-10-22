@@ -26,7 +26,7 @@ const GetTodayMenuHandler = {
             // Fetch today's menu and weather in parallel
             const [menuData, weatherData] = await Promise.all([
                 nutrisliceService.getMenuForToday(),
-                weatherService.getMorningWeather().catch(() => null) // Weather is optional
+                weatherService.getTodayWeather().catch(() => null) // Weather is optional
             ]);
 
             // Check if menu is available
@@ -56,13 +56,23 @@ const GetTodayMenuHandler = {
             let speakOutput = `Today's lunch menu includes ${menuText}.`;
 
             // Add weather context if available
-            if (weatherData && !weatherData.isFallback && weatherData.temperature !== null) {
-                speakOutput = `Good morning! It's ${weatherData.temperature} degrees and ${weatherData.conditions.toLowerCase()}. ` + speakOutput;
+            if (weatherData && !weatherData.isFallback && weatherData.current) {
+                const currentTemp = weatherData.current.temperature;
+                const currentConditions = weatherData.current.conditions.toLowerCase();
+                const todayHigh = weatherData.today.high;
+                const forecast = weatherData.today.detailedForecast;
+
+                // Build weather message with current + forecast
+                let weatherMsg = `Currently it is ${currentTemp} degrees and ${currentConditions}. `;
+                weatherMsg += `Today's high will be ${todayHigh} degrees. `;
+                weatherMsg += `${forecast}. `;
+
+                speakOutput = weatherMsg + speakOutput;
             }
 
             return handlerInput.responseBuilder
                 .speak(speakOutput)
-                .reprompt('Would you like to know about tomorrow\'s menu?')
+                .reprompt('Would you like to know about tomorrow menu?')
                 .getResponse();
         } catch (error) {
             console.error('Error in GetTodayMenuHandler:', error);

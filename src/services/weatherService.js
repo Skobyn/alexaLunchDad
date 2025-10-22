@@ -142,8 +142,90 @@ function filterMorningHours(forecast) {
 }
 
 /**
- * Get morning weather (7 AM preferred)
- * Complete workflow: grid lookup -> forecast -> filter -> format
+ * Get daily forecast
+ * @param {string} gridId - Grid ID
+ * @param {number} gridX - Grid X coordinate
+ * @param {number} gridY - Grid Y coordinate
+ * @returns {Promise<Object>} Daily forecast data
+ */
+async function getDailyForecast(gridId, gridX, gridY) {
+    try {
+        const url = `${constants.WEATHER.BASE_URL}/gridpoints/${gridId}/${gridX},${gridY}/forecast`;
+        const response = await axios.get(url, {
+            timeout: constants.WEATHER.TIMEOUT_MS,
+            headers: {
+                'User-Agent': 'AlexaLunchDad/1.0',
+                'Accept': 'application/json'
+            }
+        });
+
+        if (!response.data || !response.data.properties || !response.data.properties.periods) {
+            throw new Error('Invalid daily forecast response');
+        }
+
+        return response.data;
+    } catch (error) {
+        throw new Error(`Failed to fetch daily forecast: ${error.message}`);
+    }
+}
+
+/**
+ * Get comprehensive weather (current + forecast for the day)
+ * @returns {Promise<Object>} Complete weather data
+ */
+async function getTodayWeather() {
+    try {
+        const lat = constants.WEATHER.LAT;
+        const lon = constants.WEATHER.LON;
+
+        // Step 1: Get grid info (with retry on timeout)
+        let gridInfo;
+        try {
+            gridInfo = await getGridInfo(lat, lon);
+        } catch (error) {
+            // Retry once on timeout
+            if (error.message.includes('timeout')) {
+                gridInfo = await getGridInfo(lat, lon);
+            } else {
+                throw error;
+            }
+        }
+
+        // Step 2: Get both hourly and daily forecasts in parallel
+        const [hourlyForecast, dailyForecast] = await Promise.all([
+            getHourlyForecast(gridInfo.gridId, gridInfo.gridX, gridInfo.gridY),
+            getDailyForecast(gridInfo.gridId, gridInfo.gridX, gridInfo.gridY)
+        ]);
+
+        // Step 3: Get current conditions (first hourly period)
+        const currentConditions = hourlyForecast.properties.periods[0];
+
+        // Step 4: Get today's daily forecast
+        const todayForecast = dailyForecast.properties.periods[0];
+
+        return {
+            current: {
+                temperature: currentConditions.temperature,
+                temperatureUnit: currentConditions.temperatureUnit,
+                conditions: currentConditions.shortForecast,
+                isDaytime: currentConditions.isDaytime
+            },
+            today: {
+                high: todayForecast.temperature,
+                temperatureUnit: todayForecast.temperatureUnit,
+                detailedForecast: todayForecast.detailedForecast,
+                shortForecast: todayForecast.shortForecast
+            },
+            isFallback: false
+        };
+    } catch (error) {
+        console.error('Weather service error:', error.message);
+        return _getFallbackWeather();
+    }
+}
+
+/**
+ * Get morning weather (7 AM preferred) - DEPRECATED, use getTodayWeather
  * @returns {Promise<Object>} Morning weather data
  */
 async function getMorningWeather() {
@@ -251,7 +333,9 @@ function _getFallbackWeather() {
 module.exports = {
     getGridInfo,
     getHourlyForecast,
+    getDailyForecast,
     filterMorningHours,
+    getTodayWeather,
     getMorningWeather,
     formatWeatherForAPL,
     // Export for testing
