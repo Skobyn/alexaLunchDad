@@ -28,7 +28,6 @@ hive-mind-prompt-*.txt
 
 # Alexa Skill Dependencies
 node_modules/
-package-lock.json
 yarn.lock
 
 # AWS
