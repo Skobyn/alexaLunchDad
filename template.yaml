@@ -5,7 +5,7 @@ Description: Alexa Lunch Dad Skill - School lunch menu and weather recommendatio
 Globals:
   Function:
     Timeout: 10
-    Runtime: nodejs18.x
+    Runtime: nodejs20.x
     MemorySize: 256
     Tracing: Active
     Tags:
