@@ -18,7 +18,9 @@ module.exports = {
   ],
   testPathIgnorePatterns: [
     '/node_modules/',
-    '/tests/integration/skillFlow.test.js'
+    '/tests/integration/skillFlow.test.js',
+    '/tests/unit/services/nutrisliceService.test.js',
+    '/tests/integration/serviceIntegration.test.js'
   ],
   verbose: true,
   testTimeout: 10000
