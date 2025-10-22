@@ -1,7 +1,7 @@
 /**
- * Nutrislice Service - HTML Scraper with Caching
+ * Nutrislice Service - JSON API Client with Caching
  *
- * Fetches and parses lunch menu data from Nutrislice website
+ * Fetches and parses lunch menu data from Nutrislice JSON API
  * with retry logic, caching, and error handling.
  */
 
@@ -25,9 +25,9 @@ const RETRY_DELAY_MS = 100; // Base delay, will use exponential backoff
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 /**
- * Build Nutrislice URL for a specific date
+ * Build Nutrislice API URL for a specific date
  * @param {string} date - Date in YYYY-MM-DD format
- * @returns {string} Complete Nutrislice URL
+ * @returns {string} Complete Nutrislice API URL
  * @throws {Error} If date is invalid
  */
 function buildNutrisliceURL(date) {
@@ -36,8 +36,12 @@ function buildNutrisliceURL(date) {
         throw new Error('Invalid date parameter');
     }
 
-    const { BASE_URL, SCHOOL_ID, MEAL_TYPE } = constants.NUTRISLICE;
-    return `${BASE_URL}/${SCHOOL_ID}/${MEAL_TYPE}/${date}`;
+    const { SCHOOL_ID } = constants.NUTRISLICE;
+    // Parse date to extract year, month, day for API path
+    const [year, month, day] = date.split('-');
+
+    // Use the JSON API endpoint discovered from the browser
+    return `https://d45.api.nutrislice.com/menu/api/weeks/school/${SCHOOL_ID}/menu-type/lunch/${year}/${month}/${day}/`;
 }
 
 /**
@@ -69,9 +73,13 @@ async function getMenuForDate(date) {
         try {
             const url = buildNutrisliceURL(date);
 
-            // Make HTTP request with timeout
+            // Make HTTP request with required headers for API
             const response = await axios.get(url, {
                 timeout: constants.NUTRISLICE.TIMEOUT_MS,
+                headers: {
+                    'accept': 'application/json, text/plain, */*',
+                    'x-nutrislice-origin': 'd45.nutrislice.com'
+                },
                 validateStatus: (status) => {
                     // Accept 200 and 404 as valid responses
                     return status === 200 || status === 404;
@@ -87,17 +95,36 @@ async function getMenuForDate(date) {
                 };
             }
 
-            // Parse HTML response
-            const html = response.data;
+            // Parse JSON response from API
+            const apiData = response.data;
             let menuData;
 
-            if (parser) {
-                menuData = parser.parseNutrisliceHTML(html);
+            // Find the day matching our requested date
+            const dayData = apiData.days?.find(day => day.date === date);
+
+            if (dayData && dayData.menu_items && dayData.menu_items.length > 0) {
+                // Extract menu items
+                const items = dayData.menu_items
+                    .filter(item => item.food && item.food.name)
+                    .map(item => ({
+                        name: item.food.name,
+                        description: item.food.description || '',
+                        calories: item.food.rounded_nutrition_info?.calories || null,
+                        protein: item.food.rounded_nutrition_info?.g_protein || null,
+                        imageUrl: item.food.image_url || null
+                    }));
+
+                menuData = {
+                    date,
+                    items,
+                    fetchedAt: new Date().toISOString()
+                };
             } else {
-                // Fallback if parser not available
+                // No menu items found for this date
                 menuData = {
                     date,
                     items: [],
+                    message: 'No menu available for this date',
                     fetchedAt: new Date().toISOString()
                 };
             }
