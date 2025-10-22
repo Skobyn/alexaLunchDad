@@ -72,8 +72,6 @@ async function getMenuForDate(date) {
     for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
         try {
             const url = buildNutrisliceURL(date);
-            console.log(`[NutrisliceService] Fetching menu for date: ${date}`);
-            console.log(`[NutrisliceService] API URL: ${url}`);
 
             // Make HTTP request with required headers for API
             const response = await axios.get(url, {
@@ -87,8 +85,6 @@ async function getMenuForDate(date) {
                     return status === 200 || status === 404;
                 }
             });
-
-            console.log(`[NutrisliceService] API response status: ${response.status}`);
 
             // Handle 404 - no menu available
             if (response.status === 404) {
@@ -105,11 +101,8 @@ async function getMenuForDate(date) {
 
             // Find the day matching our requested date
             const dayData = apiData.days?.find(day => day.date === date);
-            console.log(`[NutrisliceService] Days in response: ${apiData.days?.length || 0}`);
-            console.log(`[NutrisliceService] Found day data for ${date}: ${!!dayData}`);
 
             if (dayData && dayData.menu_items && dayData.menu_items.length > 0) {
-                console.log(`[NutrisliceService] Found ${dayData.menu_items.length} menu items`);
 
                 // Extract menu items - format for menuParser compatibility
                 const items = dayData.menu_items
@@ -125,16 +118,12 @@ async function getMenuForDate(date) {
                         imageUrl: item.food.image_url || null
                     }));
 
-                console.log(`[NutrisliceService] Parsed ${items.length} items: ${items.map(i => i.name).join(', ')}`);
-
                 menuData = {
                     date,
                     items,
                     fetchedAt: new Date().toISOString()
                 };
             } else {
-                console.log(`[NutrisliceService] No menu items found for ${date}`);
-
                 // No menu items found for this date
                 menuData = {
                     date,
@@ -196,7 +185,6 @@ async function getMenuForToday() {
         todayDate = now.toISOString().split('T')[0];
     }
 
-    console.log(`[NutrisliceService] getMenuForToday() - calculated date: ${todayDate}`);
     return getMenuForDate(todayDate);
 }
 
@@ -225,7 +213,6 @@ async function getMenuForTomorrow() {
         tomorrowDate = tomorrow.toISOString().split('T')[0];
     }
 
-    console.log(`[NutrisliceService] getMenuForTomorrow() - calculated date: ${tomorrowDate}`);
     return getMenuForDate(tomorrowDate);
 }
 
