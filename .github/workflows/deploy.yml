@@ -73,7 +73,8 @@ jobs:
             --stack-name alexa-lunch-dad-dev \
             --parameter-overrides SkillId=${{ secrets.ALEXA_SKILL_ID_DEV }} \
             --capabilities CAPABILITY_IAM \
-            --region ${{ env.AWS_REGION }}
+            --region ${{ env.AWS_REGION }} \
+            --resolve-s3
 
   deploy-prod:
     needs: test
@@ -114,4 +115,5 @@ jobs:
             --stack-name alexa-lunch-dad-prod \
             --parameter-overrides SkillId=${{ secrets.ALEXA_SKILL_ID_PROD }} \
             --capabilities CAPABILITY_IAM \
-            --region ${{ env.AWS_REGION }}
+            --region ${{ env.AWS_REGION }} \
+            --resolve-s3
