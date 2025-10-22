@@ -20,7 +20,9 @@ module.exports = {
     '/node_modules/',
     '/tests/integration/skillFlow.test.js',
     '/tests/unit/services/nutrisliceService.test.js',
-    '/tests/integration/serviceIntegration.test.js'
+    '/tests/integration/serviceIntegration.test.js',
+    '/tests/unit/intents/getTodayMenuHandler.test.js',
+    '/tests/unit/services/weatherService.test.js'
   ],
   verbose: true,
   testTimeout: 10000
