@@ -1,0 +1,70 @@
+{
+  "manifest": {
+    "publishingInformation": {
+      "locales": {
+        "en-US": {
+          "summary": "Get daily school lunch menus for your kids",
+          "examplePhrases": [
+            "Alexa, ask lunch dad what's for lunch today",
+            "Alexa, ask lunch dad about tomorrow's menu",
+            "Alexa, open lunch dad"
+          ],
+          "keywords": [
+            "lunch",
+            "school",
+            "menu",
+            "cafeteria",
+            "food",
+            "kids",
+            "children",
+            "school lunch",
+            "daily menu",
+            "meal planning"
+          ],
+          "name": "Lunch Dad",
+          "description": "Lunch Dad helps parents and students stay informed about daily school lunch menus. Simply ask what's being served today or tomorrow, and get instant access to the cafeteria menu. Perfect for planning ahead and helping picky eaters prepare for their school day.",
+          "smallIconUri": "file://assets/icon_108.png",
+          "largeIconUri": "file://assets/icon_512.png"
+        }
+      },
+      "isAvailableWorldwide": true,
+      "testingInstructions": "To test this skill:\n1. Invoke with 'Alexa, open lunch dad'\n2. Ask 'what's for lunch today'\n3. Ask 'what's for lunch tomorrow'\n4. Test help intent with 'help'\n5. Exit with 'stop' or 'cancel'\n\nThe skill returns school lunch menu information for the current and next day.",
+      "category": "EDUCATION_AND_REFERENCE",
+      "distributionCountries": []
+    },
+    "apis": {
+      "custom": {
+        "endpoint": {
+          "uri": "arn:aws:lambda:us-east-1:123456789012:function:lunch-dad-skill"
+        },
+        "interfaces": [
+          {
+            "type": "ALEXA_PRESENTATION_APL"
+          }
+        ],
+        "regions": {
+          "NA": {
+            "endpoint": {
+              "uri": "arn:aws:lambda:us-east-1:123456789012:function:lunch-dad-skill"
+            }
+          }
+        }
+      }
+    },
+    "manifestVersion": "1.0",
+    "permissions": [],
+    "privacyAndCompliance": {
+      "allowsPurchases": false,
+      "isExportCompliant": true,
+      "containsAds": false,
+      "isChildDirected": true,
+      "usesPersonalInfo": false,
+      "locales": {
+        "en-US": {
+          "privacyPolicyUrl": "",
+          "termsOfUseUrl": ""
+        }
+      }
+    }
+  }
+}

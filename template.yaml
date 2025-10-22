@@ -1,46 +1,189 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: Alexa Lunch Dad Skill
+Description: Alexa Lunch Dad Skill - School lunch menu and weather recommendations
 
 Globals:
   Function:
     Timeout: 10
-    Runtime: nodejs18.x
+    Runtime: nodejs20.x
     MemorySize: 256
+    Tracing: Active
+    Tags:
+      Application: AlexaLunchDad
+      ManagedBy: SAM
 
 Parameters:
+  Environment:
+    Type: String
+    Description: Deployment environment (dev/prod)
+    Default: dev
+    AllowedValues:
+      - dev
+      - prod
+
   SkillId:
     Type: String
-    Description: Alexa Skill ID
+    Description: Alexa Skill ID for event trigger
     Default: ""
+
+  NutrisliceBaseUrl:
+    Type: String
+    Description: Base URL for Nutrislice menu API
+    Default: "https://d45.nutrislice.com/menu"
+
+  NutrisliceSchoolId:
+    Type: String
+    Description: School ID for Nutrislice menu lookup
+    Default: "westmore-elementary-school-2"
+
+  WeatherLat:
+    Type: String
+    Description: Latitude for weather.gov API
+    Default: "39.0997"
+
+  WeatherLon:
+    Type: String
+    Description: Longitude for weather.gov API
+    Default: "-77.0941"
+
+  SchoolTimezone:
+    Type: String
+    Description: School timezone for date calculations
+    Default: "America/New_York"
+
+  CacheTTLMenu:
+    Type: String
+    Description: Cache TTL for menu data in seconds
+    Default: "86400"
+
+  CacheTTLWeather:
+    Type: String
+    Description: Cache TTL for weather data in seconds
+    Default: "600"
+
+  SchoolHolidays:
+    Type: String
+    Description: Comma-separated list of school holidays (YYYY-MM-DD)
+    Default: "2025-12-23,2025-12-24,2025-12-25,2025-12-26,2025-12-27,2025-12-30,2025-12-31,2026-01-01,2026-01-02"
+
+  LogLevel:
+    Type: String
+    Description: CloudWatch log level
+    Default: info
+    AllowedValues:
+      - debug
+      - info
+      - warn
+      - error
+
+  LogRetentionDays:
+    Type: Number
+    Description: CloudWatch log retention in days
+    Default: 7
+    AllowedValues:
+      - 1
+      - 3
+      - 5
+      - 7
+      - 14
+      - 30
+      - 60
+      - 90
+      - 120
+      - 150
+      - 180
+      - 365
 
 Resources:
   AlexaLunchDadFunction:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: AlexaLunchDad
-      CodeUri: src/
-      Handler: index.handler
-      Description: Alexa skill for lunch recommendations
+      FunctionName: !Sub AlexaLunchDad-${Environment}
+      CodeUri: ./
+      Handler: src/index.handler
+      Description: !Sub Alexa skill for school lunch menu and weather recommendations (${Environment})
+      Architectures:
+        - x86_64
       Environment:
         Variables:
-          LOG_LEVEL: info
+          ENVIRONMENT: !Ref Environment
+          LOG_LEVEL: !Ref LogLevel
+          NUTRISLICE_BASE_URL: !Ref NutrisliceBaseUrl
+          NUTRISLICE_SCHOOL_ID: !Ref NutrisliceSchoolId
+          WEATHER_LAT: !Ref WeatherLat
+          WEATHER_LON: !Ref WeatherLon
+          CACHE_TTL_MENU: !Ref CacheTTLMenu
+          CACHE_TTL_WEATHER: !Ref CacheTTLWeather
+          SCHOOL_TIMEZONE: !Ref SchoolTimezone
+          SCHOOL_HOLIDAYS: !Ref SchoolHolidays
       Events:
         AlexaSkillEvent:
           Type: AlexaSkill
           Properties:
             SkillId: !Ref SkillId
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - logs:CreateLogGroup
+                - logs:CreateLogStream
+                - logs:PutLogEvents
+              Resource: !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/AlexaLunchDad-${Environment}:*
+            - Effect: Allow
+              Action:
+                - xray:PutTraceSegments
+                - xray:PutTelemetryRecords
+              Resource: '*'
 
   AlexaLunchDadLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: !Sub /aws/lambda/${AlexaLunchDadFunction}
-      RetentionInDays: 7
+      LogGroupName: !Sub /aws/lambda/AlexaLunchDad-${Environment}
+      RetentionInDays: !Ref LogRetentionDays
+
+  AlexaLunchDadAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub AlexaLunchDad-${Environment}-Errors
+      AlarmDescription: Alert when Lambda function errors exceed threshold
+      MetricName: Errors
+      Namespace: AWS/Lambda
+      Statistic: Sum
+      Period: 300
+      EvaluationPeriods: 1
+      Threshold: 5
+      ComparisonOperator: GreaterThanThreshold
+      Dimensions:
+        - Name: FunctionName
+          Value: !Ref AlexaLunchDadFunction
+      TreatMissingData: notBreaching
 
 Outputs:
-  AlexaLunchDadFunction:
-    Description: "Lambda Function ARN"
+  AlexaLunchDadFunctionArn:
+    Description: Lambda Function ARN
     Value: !GetAtt AlexaLunchDadFunction.Arn
+    Export:
+      Name: !Sub ${AWS::StackName}-FunctionArn
+
+  AlexaLunchDadFunctionName:
+    Description: Lambda Function Name
+    Value: !Ref AlexaLunchDadFunction
+    Export:
+      Name: !Sub ${AWS::StackName}-FunctionName
+
   AlexaLunchDadFunctionIamRole:
-    Description: "Implicit IAM Role created for function"
+    Description: Implicit IAM Role created for function
     Value: !GetAtt AlexaLunchDadFunctionRole.Arn
+    Export:
+      Name: !Sub ${AWS::StackName}-FunctionRoleArn
+
+  AlexaLunchDadLogGroup:
+    Description: CloudWatch Log Group
+    Value: !Ref AlexaLunchDadLogGroup
+    Export:
+      Name: !Sub ${AWS::StackName}-LogGroup
+
+  DeploymentEnvironment:
+    Description: Deployment environment
+    Value: !Ref Environment

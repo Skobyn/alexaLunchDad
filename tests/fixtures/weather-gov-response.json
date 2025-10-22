@@ -1,0 +1,126 @@
+{
+  "gridPointResponse": {
+    "properties": {
+      "gridId": "LWX",
+      "gridX": 93,
+      "gridY": 80,
+      "forecast": "https://api.weather.gov/gridpoints/LWX/93,80/forecast",
+      "forecastHourly": "https://api.weather.gov/gridpoints/LWX/93,80/forecast/hourly"
+    }
+  },
+  "hourlyForecastResponse": {
+    "properties": {
+      "periods": [
+        {
+          "number": 1,
+          "name": "Today 6 AM",
+          "startTime": "2025-10-22T06:00:00-04:00",
+          "endTime": "2025-10-22T07:00:00-04:00",
+          "isDaytime": true,
+          "temperature": 47,
+          "temperatureUnit": "F",
+          "windSpeed": "3 mph",
+          "windDirection": "NW",
+          "icon": "https://api.weather.gov/icons/land/day/few",
+          "shortForecast": "Mostly Clear",
+          "detailedForecast": "Mostly clear, with a low around 47."
+        },
+        {
+          "number": 2,
+          "name": "Today 7 AM",
+          "startTime": "2025-10-22T07:00:00-04:00",
+          "endTime": "2025-10-22T08:00:00-04:00",
+          "isDaytime": true,
+          "temperature": 49,
+          "temperatureUnit": "F",
+          "windSpeed": "5 mph",
+          "windDirection": "NW",
+          "icon": "https://api.weather.gov/icons/land/day/skc",
+          "shortForecast": "Sunny",
+          "detailedForecast": "Sunny, with a high near 49."
+        },
+        {
+          "number": 3,
+          "name": "Today 8 AM",
+          "startTime": "2025-10-22T08:00:00-04:00",
+          "endTime": "2025-10-22T09:00:00-04:00",
+          "isDaytime": true,
+          "temperature": 52,
+          "temperatureUnit": "F",
+          "windSpeed": "6 mph",
+          "windDirection": "W",
+          "icon": "https://api.weather.gov/icons/land/day/skc",
+          "shortForecast": "Sunny",
+          "detailedForecast": "Sunny, with a high near 52."
+        },
+        {
+          "number": 4,
+          "name": "Today 9 AM",
+          "startTime": "2025-10-22T09:00:00-04:00",
+          "endTime": "2025-10-22T10:00:00-04:00",
+          "isDaytime": true,
+          "temperature": 55,
+          "temperatureUnit": "F",
+          "windSpeed": "7 mph",
+          "windDirection": "W",
+          "icon": "https://api.weather.gov/icons/land/day/skc",
+          "shortForecast": "Sunny",
+          "detailedForecast": "Sunny, with a high near 55."
+        },
+        {
+          "number": 5,
+          "name": "Today 10 AM",
+          "startTime": "2025-10-22T10:00:00-04:00",
+          "endTime": "2025-10-22T11:00:00-04:00",
+          "isDaytime": true,
+          "temperature": 58,
+          "temperatureUnit": "F",
+          "windSpeed": "8 mph",
+          "windDirection": "W",
+          "icon": "https://api.weather.gov/icons/land/day/skc",
+          "shortForecast": "Sunny",
+          "detailedForecast": "Sunny, with a high near 58."
+        },
+        {
+          "number": 6,
+          "name": "Tonight 6 PM",
+          "startTime": "2025-10-22T18:00:00-04:00",
+          "endTime": "2025-10-22T19:00:00-04:00",
+          "isDaytime": false,
+          "temperature": 48,
+          "temperatureUnit": "F",
+          "windSpeed": "5 mph",
+          "windDirection": "NW",
+          "icon": "https://api.weather.gov/icons/land/night/few",
+          "shortForecast": "Mostly Clear",
+          "detailedForecast": "Mostly clear, with a low around 45."
+        }
+      ]
+    }
+  },
+  "nighttimePeriodsOnly": {
+    "properties": {
+      "periods": [
+        {
+          "number": 1,
+          "name": "Tonight 10 PM",
+          "startTime": "2025-10-22T22:00:00-04:00",
+          "endTime": "2025-10-22T23:00:00-04:00",
+          "isDaytime": false,
+          "temperature": 42,
+          "temperatureUnit": "F",
+          "windSpeed": "3 mph",
+          "windDirection": "N",
+          "icon": "https://api.weather.gov/icons/land/night/clear",
+          "shortForecast": "Clear",
+          "detailedForecast": "Clear skies."
+        }
+      ]
+    }
+  },
+  "emptyPeriods": {
+    "properties": {
+      "periods": []
+    }
+  }
+}
