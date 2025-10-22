@@ -113,8 +113,6 @@ const GetTomorrowMenuHandler = {
                 .reprompt('Would you like to know about today\'s menu?')
                 .getResponse();
         } catch (error) {
-            console.error('Error in GetTomorrowMenuHandler:', error);
-
             const speakOutput = constants.ERRORS.API_ERROR;
             return handlerInput.responseBuilder
                 .speak(speakOutput)

@@ -227,7 +227,6 @@ async function getTodayWeather() {
             isFallback: false
         };
     } catch (error) {
-        console.error('Weather service error:', error.message);
         return _getFallbackWeather();
     }
 }
@@ -280,10 +279,6 @@ async function getMorningWeather() {
             windDirection: morningData.windDirection
         };
     } catch (error) {
-    // Log error in development/testing, silent in production
-        if (process.env.NODE_ENV !== 'production') {
-            console.error('Weather service error:', error.message);
-        }
         return _getFallbackWeather();
     }
 }

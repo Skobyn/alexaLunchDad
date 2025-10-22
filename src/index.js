@@ -44,8 +44,6 @@ function initializeServices() {
 
   // Weather service already imports cacheService directly
   // No additional setup needed for weatherService
-
-  console.log('Services initialized successfully');
 }
 
 /**
@@ -73,8 +71,6 @@ function validateEnvironment() {
     timezone: constants.TIMEZONE,
     maxMenuItems: constants.MAX_MENU_ITEMS
   };
-
-  console.log('Environment configuration:', JSON.stringify(config, null, 2));
 }
 
 // Initialize on cold start
@@ -82,7 +78,6 @@ try {
   validateEnvironment();
   initializeServices();
 } catch (error) {
-  console.error('Failed to initialize services:', error);
   // Continue anyway - individual handlers will handle errors gracefully
 }
 

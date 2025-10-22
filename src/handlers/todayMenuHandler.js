@@ -69,8 +69,6 @@ const GetTodayMenuHandler = {
                 .getResponse();
 
         } catch (error) {
-            console.error('Error in GetTodayMenuHandler:', error);
-
             const errorMessage = 'I\'m having trouble getting the menu right now. Please try again later.';
             return handlerInput.responseBuilder
                 .speak(errorMessage)

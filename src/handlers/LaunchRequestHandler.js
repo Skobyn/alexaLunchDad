@@ -3,7 +3,7 @@ const LaunchRequestHandler = {
         return handlerInput.requestEnvelope.request.type === 'LaunchRequest';
     },
     handle(handlerInput) {
-        const speakOutput = 'Welcome to Lunch Dad! Ask me for a lunch recommendation, and I\'ll help you decide what to eat.';
+        const speakOutput = 'Welcome to Lunch Dad! Ask me whats for lunch today or tomorrow, and I\'ll help you decide what to eat. Brayden.. we already know.. home lunch';
 
         return handlerInput.responseBuilder
             .speak(speakOutput)

@@ -50,8 +50,6 @@ const GetTomorrowMenuHandler = {
                 .getResponse();
 
         } catch (error) {
-            console.error('Error in GetTomorrowMenuHandler:', error);
-
             const errorMessage = constants.ERRORS.API_ERROR;
             return handlerInput.responseBuilder
                 .speak(errorMessage)
