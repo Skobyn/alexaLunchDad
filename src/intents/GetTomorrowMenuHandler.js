@@ -13,6 +13,20 @@ const menuParser = require('../utils/menuParser');
 const dateUtils = require('../utils/dateUtils');
 const constants = require('../utils/constants');
 
+/**
+ * Escape XML special characters for SSML
+ * @param {string} text - Text to escape
+ * @returns {string} - Escaped text safe for SSML
+ */
+function escapeXml(text) {
+    return text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&apos;');
+}
+
 const GetTomorrowMenuHandler = {
     canHandle(handlerInput) {
         return (
@@ -59,17 +73,18 @@ const GetTomorrowMenuHandler = {
                     .getResponse();
             }
 
-            // Format menu items for speech
+            // Format menu items for speech and escape XML special characters
             const menuText = menuParser.formatMenuItems(mainItems);
+            const safeMenuText = escapeXml(menuText);
 
             // Build speech output with appropriate day reference
             let speakOutput;
             if (isActuallyTomorrow) {
-                speakOutput = `Tomorrow's lunch menu includes ${menuText}.`;
+                speakOutput = `Tomorrow's lunch menu includes ${safeMenuText}.`;
             } else {
                 // Weekend/holiday case - specify the actual day
                 const dayName = nextSchoolDay.toLocaleDateString('en-US', { weekday: 'long' });
-                speakOutput = `The next school lunch is on ${dayName}, featuring ${menuText}.`;
+                speakOutput = `The next school lunch is on ${dayName}, featuring ${safeMenuText}.`;
             }
 
             return handlerInput.responseBuilder

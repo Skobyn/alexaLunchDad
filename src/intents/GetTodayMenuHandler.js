@@ -13,6 +13,20 @@ const weatherService = require('../services/weatherService');
 const menuParser = require('../utils/menuParser');
 const constants = require('../utils/constants');
 
+/**
+ * Escape XML special characters for SSML
+ * @param {string} text - Text to escape
+ * @returns {string} - Escaped text safe for SSML
+ */
+function escapeXml(text) {
+    return text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&apos;');
+}
+
 const GetTodayMenuHandler = {
     canHandle(handlerInput) {
         return (
@@ -49,11 +63,12 @@ const GetTodayMenuHandler = {
                     .getResponse();
             }
 
-            // Format menu items for speech
+            // Format menu items for speech and escape XML special characters
             const menuText = menuParser.formatMenuItems(mainItems);
+            const safeMenuText = escapeXml(menuText);
 
             // Build speech output
-            let speakOutput = `Today's lunch menu includes ${menuText}.`;
+            let speakOutput = `Today's lunch menu includes ${safeMenuText}.`;
 
             // Add weather context if available
             if (weatherData && !weatherData.isFallback && weatherData.current) {
@@ -65,7 +80,9 @@ const GetTodayMenuHandler = {
                 // Build weather message with current + forecast
                 let weatherMsg = `Currently it is ${currentTemp} degrees and ${currentConditions}. `;
                 weatherMsg += `Today's high will be ${todayHigh} degrees. `;
-                weatherMsg += `${forecast}. `;
+                // Remove trailing period from forecast if present to avoid double periods
+                const cleanForecast = forecast.endsWith('.') ? forecast.slice(0, -1) : forecast;
+                weatherMsg += `${cleanForecast}. `;
 
                 speakOutput = weatherMsg + speakOutput;
             }
