@@ -10,8 +10,12 @@
 
 const nutrisliceService = require('../services/nutrisliceService');
 const weatherService = require('../services/weatherService');
+const menuCalendarService = require('../services/menuCalendarService');
 const menuParser = require('../utils/menuParser');
 const constants = require('../utils/constants');
+const aplUtils = require('../utils/aplUtils');
+const { buildMenuDataSource } = require('../apl/menuDataSource');
+const menuCalendarDocument = require('../apl/menuCalendarDocument.json');
 
 /**
  * Escape XML special characters for SSML
@@ -37,10 +41,11 @@ const GetTodayMenuHandler = {
 
     async handle(handlerInput) {
         try {
-            // Fetch today's menu and weather in parallel
-            const [menuData, weatherData] = await Promise.all([
+            // Fetch today's menu, weather, and 5-day calendar in parallel
+            const [menuData, weatherData, menuCalendar] = await Promise.all([
                 nutrisliceService.getMenuForToday(),
-                weatherService.getTodayWeather().catch(() => null) // Weather is optional
+                weatherService.getTodayWeather().catch(() => null), // Weather is optional
+                menuCalendarService.getMenuCalendar().catch(() => null) // Calendar is optional for APL
             ]);
 
             // Check if menu is available
@@ -87,10 +92,31 @@ const GetTodayMenuHandler = {
                 speakOutput = weatherMsg + speakOutput;
             }
 
-            return handlerInput.responseBuilder
+            // Build response
+            const responseBuilder = handlerInput.responseBuilder
                 .speak(speakOutput)
-                .reprompt('Would you like to know about tomorrow menu?')
-                .getResponse();
+                .reprompt('Would you like to know about tomorrow menu?');
+
+            // Add APL directive if device supports it and we have calendar data
+            if (aplUtils.supportsAPL(handlerInput) && menuCalendar && menuCalendar.days) {
+                try {
+                    // Build APL data source
+                    const aplDataSource = buildMenuDataSource(menuCalendar, weatherData);
+
+                    // Add APL directive
+                    const aplDirective = aplUtils.buildRenderDocumentDirective(
+                        menuCalendarDocument,
+                        aplDataSource
+                    );
+
+                    responseBuilder.addDirective(aplDirective);
+                } catch (aplError) {
+                    // APL error shouldn't break the response - log and continue
+                    // Voice response will still work
+                }
+            }
+
+            return responseBuilder.getResponse();
         } catch (error) {
             const speakOutput = constants.ERRORS.API_ERROR;
             return handlerInput.responseBuilder
