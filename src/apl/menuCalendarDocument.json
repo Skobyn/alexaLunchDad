@@ -283,15 +283,13 @@
                 "alignItems": "start",
                 "width": "100%",
                 "data": "${menuData.days}",
-                "items": [
-                  {
-                    "type": "DayCard",
-                    "dayName": "${data.dayName}",
-                    "date": "${data.date}",
-                    "menuItems": "${data.menuItems}",
-                    "isToday": "${data.isToday}"
-                  }
-                ]
+                "item": {
+                  "type": "DayCard",
+                  "dayName": "${data.dayName}",
+                  "date": "${data.date}",
+                  "menuItems": "${data.menuItems}",
+                  "isToday": "${data.isToday}"
+                }
               }
             ]
           },
@@ -328,15 +326,13 @@
                     "width": "100%",
                     "paddingBottom": "${@spacingMedium}",
                     "data": "${data.days}",
-                    "items": [
-                      {
-                        "type": "DayCard",
-                        "dayName": "${data.dayName}",
-                        "date": "${data.date}",
-                        "menuItems": "${data.menuItems}",
-                        "isToday": "${data.isToday}"
-                      }
-                    ]
+                    "item": {
+                      "type": "DayCard",
+                      "dayName": "${data.dayName}",
+                      "date": "${data.date}",
+                      "menuItems": "${data.menuItems}",
+                      "isToday": "${data.isToday}"
+                    }
                   }
                 ]
               }
