@@ -72,10 +72,21 @@ describe('LaunchRequestHandler', () => {
   describe('handle', () => {
     beforeEach(() => {
       mockHandlerInput.requestEnvelope.request.type = 'LaunchRequest';
+      // Mock APL support - return false by default
+      mockHandlerInput.requestEnvelope = {
+        ...mockHandlerInput.requestEnvelope,
+        context: {
+          System: {
+            device: {
+              supportedInterfaces: {}
+            }
+          }
+        }
+      };
     });
 
-    it('should call speak with welcome message', () => {
-      LaunchRequestHandler.handle(mockHandlerInput);
+    it('should call speak with welcome message', async () => {
+      await LaunchRequestHandler.handle(mockHandlerInput);
 
       expect(mockResponseBuilder.speak).toHaveBeenCalledTimes(1);
       expect(mockResponseBuilder.speak).toHaveBeenCalledWith(
@@ -83,8 +94,8 @@ describe('LaunchRequestHandler', () => {
       );
     });
 
-    it('should call reprompt with follow-up question', () => {
-      LaunchRequestHandler.handle(mockHandlerInput);
+    it('should call reprompt with follow-up question', async () => {
+      await LaunchRequestHandler.handle(mockHandlerInput);
 
       expect(mockResponseBuilder.reprompt).toHaveBeenCalledTimes(1);
       expect(mockResponseBuilder.reprompt).toHaveBeenCalledWith(
@@ -92,22 +103,22 @@ describe('LaunchRequestHandler', () => {
       );
     });
 
-    it('should call getResponse to build final response', () => {
-      LaunchRequestHandler.handle(mockHandlerInput);
+    it('should call getResponse to build final response', async () => {
+      await LaunchRequestHandler.handle(mockHandlerInput);
 
       expect(mockResponseBuilder.getResponse).toHaveBeenCalledTimes(1);
     });
 
-    it('should return response object with correct structure', () => {
-      const response = LaunchRequestHandler.handle(mockHandlerInput);
+    it('should return response object with correct structure', async () => {
+      const response = await LaunchRequestHandler.handle(mockHandlerInput);
 
       expect(response).toBeDefined();
       expect(response).toHaveProperty('outputSpeech');
       expect(response).toHaveProperty('reprompt');
     });
 
-    it('should call responseBuilder methods in correct order', () => {
-      LaunchRequestHandler.handle(mockHandlerInput);
+    it('should call responseBuilder methods in correct order', async () => {
+      await LaunchRequestHandler.handle(mockHandlerInput);
 
       // Verify interaction sequence
       const calls = mockResponseBuilder.speak.mock.invocationCallOrder[0];
@@ -118,25 +129,30 @@ describe('LaunchRequestHandler', () => {
       expect(repromptCalls).toBeLessThan(responseCalls);
     });
 
-    it('should include instructions in welcome message', () => {
-      LaunchRequestHandler.handle(mockHandlerInput);
+    it('should include instructions in welcome message', async () => {
+      await LaunchRequestHandler.handle(mockHandlerInput);
 
       const speakArg = mockResponseBuilder.speak.mock.calls[0][0];
       expect(speakArg.toLowerCase()).toContain('lunch');
     });
 
-    it('should not throw error when called with valid handlerInput', () => {
-      expect(() => {
-        LaunchRequestHandler.handle(mockHandlerInput);
-      }).not.toThrow();
+    it('should not throw error when called with valid handlerInput', async () => {
+      await expect(LaunchRequestHandler.handle(mockHandlerInput)).resolves.not.toThrow();
     });
   });
 
   describe('behavior verification', () => {
-    it('should coordinate with responseBuilder correctly', () => {
+    it('should coordinate with responseBuilder correctly', async () => {
       mockHandlerInput.requestEnvelope.request.type = 'LaunchRequest';
+      mockHandlerInput.requestEnvelope.context = {
+        System: {
+          device: {
+            supportedInterfaces: {}
+          }
+        }
+      };
 
-      const response = LaunchRequestHandler.handle(mockHandlerInput);
+      const response = await LaunchRequestHandler.handle(mockHandlerInput);
 
       // Verify the conversation between handler and responseBuilder
       expect(mockResponseBuilder.speak).toHaveBeenCalled();
