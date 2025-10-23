@@ -31,7 +31,6 @@ function getViewportProfile(handlerInput) {
     // Determine profile based on shape and size
     const shape = viewport.shape; // "ROUND" or "RECTANGLE"
     const width = viewport.pixelWidth;
-    const height = viewport.pixelHeight;
 
     // Echo Spot (round)
     if (shape === 'ROUND') {
