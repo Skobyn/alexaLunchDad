@@ -41,7 +41,7 @@ const GetTomorrowMenuHandler = {
             // Fetch tomorrow's menu and weather in parallel
             const [menuData, weatherData] = await Promise.all([
                 nutrisliceService.getMenuForTomorrow(),
-                weatherService.getTodayWeather().catch(() => null) // Weather is optional
+                weatherService.getTomorrowWeather().catch(() => null) // Weather is optional
             ]);
 
             // Calculate which day we're showing (for better UX)
@@ -93,15 +93,14 @@ const GetTomorrowMenuHandler = {
             }
 
             // Add weather context if available
-            if (weatherData && !weatherData.isFallback && weatherData.current) {
-                const currentTemp = weatherData.current.temperature;
-                const currentConditions = weatherData.current.conditions.toLowerCase();
-                const todayHigh = weatherData.today.high;
-                const forecast = weatherData.today.detailedForecast;
+            if (weatherData && !weatherData.isFallback && weatherData.tomorrow) {
+                const dayName = weatherData.tomorrow.dayName;
+                const temp = weatherData.tomorrow.temperature;
+                const conditions = weatherData.tomorrow.shortForecast.toLowerCase();
+                const forecast = weatherData.tomorrow.detailedForecast;
 
-                // Build weather message with current + forecast
-                let weatherMsg = `Currently it is ${currentTemp} degrees and ${currentConditions}. `;
-                weatherMsg += `Today's high will be ${todayHigh} degrees. `;
+                // Build weather message for tomorrow's forecast
+                let weatherMsg = `${dayName}'s forecast calls for ${conditions} with a high of ${temp} degrees. `;
                 // Remove trailing period from forecast if present to avoid double periods
                 const cleanForecast = forecast.endsWith('.') ? forecast.slice(0, -1) : forecast;
                 weatherMsg += `${cleanForecast}. `;

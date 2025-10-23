@@ -93,9 +93,14 @@ describe('GetTomorrowMenuHandler', () => {
       dateUtils.getTodayInTimezone.mockReturnValue(mockToday);
       dateUtils.getNextSchoolDay.mockReturnValue(mockTomorrow);
       nutrisliceService.getMenuForTomorrow.mockResolvedValue(mockMenuData);
-      weatherService.getTodayWeather.mockResolvedValue({
-        current: { temperature: 48, temperatureUnit: 'F', conditions: 'Cloudy', isDaytime: true },
-        today: { high: 50, temperatureUnit: 'F', detailedForecast: 'Cloudy. High near 50, with temperatures falling to around 48 in the afternoon. West northwest wind around 15 mph, with gusts as high as 25 mph', shortForecast: 'Cloudy' },
+      weatherService.getTomorrowWeather.mockResolvedValue({
+        tomorrow: {
+          dayName: 'Tuesday',
+          temperature: 50,
+          temperatureUnit: 'F',
+          detailedForecast: 'Partly cloudy with a high near 50. West wind around 10 mph',
+          shortForecast: 'Partly Cloudy'
+        },
         isFallback: false
       });
       menuParser.extractMainItems.mockReturnValue(mockMainItems);
@@ -114,7 +119,7 @@ describe('GetTomorrowMenuHandler', () => {
         expect.stringContaining("Tomorrow's lunch menu includes Spaghetti")
       );
       expect(handlerInput.responseBuilder.speak).toHaveBeenCalledWith(
-        expect.stringContaining('Currently it is 48 degrees')
+        expect.stringContaining("Tuesday's forecast calls for partly cloudy with a high of 50 degrees")
       );
     });
 
@@ -221,9 +226,14 @@ describe('GetTomorrowMenuHandler', () => {
       dateUtils.getTodayInTimezone.mockReturnValue(mockToday);
       dateUtils.getNextSchoolDay.mockReturnValue(mockTomorrow);
       nutrisliceService.getMenuForTomorrow.mockResolvedValue(mockMenuData);
-      weatherService.getTodayWeather.mockResolvedValue({
-        current: { temperature: 48, temperatureUnit: 'F', conditions: 'Cloudy', isDaytime: true },
-        today: { high: 50, temperatureUnit: 'F', detailedForecast: 'Cloudy. High near 50, with temperatures falling to around 48 in the afternoon. West northwest wind around 15 mph, with gusts as high as 25 mph', shortForecast: 'Cloudy' },
+      weatherService.getTomorrowWeather.mockResolvedValue({
+        tomorrow: {
+          dayName: 'Tuesday',
+          temperature: 50,
+          temperatureUnit: 'F',
+          detailedForecast: 'Partly cloudy with a high near 50. West wind around 10 mph',
+          shortForecast: 'Partly Cloudy'
+        },
         isFallback: false
       });
       menuParser.extractMainItems.mockReturnValue(mockMainItems);
@@ -237,7 +247,7 @@ describe('GetTomorrowMenuHandler', () => {
         expect.stringContaining("Tomorrow's lunch menu includes Pizza and Burger")
       );
       expect(handlerInput.responseBuilder.speak).toHaveBeenCalledWith(
-        expect.stringContaining('Currently it is 48 degrees')
+        expect.stringContaining("Tuesday's forecast calls for partly cloudy with a high of 50 degrees")
       );
     });
   });

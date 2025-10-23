@@ -232,6 +232,61 @@ async function getTodayWeather() {
 }
 
 /**
+ * Get tomorrow's weather forecast
+ * @returns {Promise<Object>} Tomorrow's weather forecast
+ */
+async function getTomorrowWeather() {
+    try {
+        const lat = constants.WEATHER.LAT;
+        const lon = constants.WEATHER.LON;
+
+        // Step 1: Get grid info (with retry on timeout)
+        let gridInfo;
+        try {
+            gridInfo = await getGridInfo(lat, lon);
+        } catch (error) {
+            // Retry once on timeout
+            if (error.message.includes('timeout')) {
+                gridInfo = await getGridInfo(lat, lon);
+            } else {
+                throw error;
+            }
+        }
+
+        // Step 2: Get daily forecast
+        const dailyForecast = await getDailyForecast(gridInfo.gridId, gridInfo.gridX, gridInfo.gridY);
+
+        // Step 3: Find tomorrow's forecast period
+        // Weather.gov returns periods like: "Today", "Tonight", "Wednesday", "Wednesday Night", etc.
+        // We want the first daytime period that's NOT "Today"
+        const dailyPeriods = dailyForecast.properties.periods;
+        const tomorrowForecast = dailyPeriods.find(period =>
+            period.name !== 'Today' &&
+            period.name !== 'Tonight' &&
+            period.isDaytime === true
+        ) || dailyPeriods[1]; // Fallback to second period if logic fails
+
+        // Strip quotes from forecast text to prevent SSML errors
+        const cleanForecast = tomorrowForecast.detailedForecast
+            .replace(/"/g, '')  // Remove double quotes
+            .replace(/'/g, ''); // Remove single quotes
+
+        return {
+            tomorrow: {
+                dayName: tomorrowForecast.name,
+                temperature: tomorrowForecast.temperature,
+                temperatureUnit: tomorrowForecast.temperatureUnit,
+                detailedForecast: cleanForecast,
+                shortForecast: tomorrowForecast.shortForecast
+            },
+            isFallback: false
+        };
+    } catch (error) {
+        return _getFallbackWeather();
+    }
+}
+
+/**
  * Get morning weather (7 AM preferred) - DEPRECATED, use getTodayWeather
  * @returns {Promise<Object>} Morning weather data
  */
@@ -339,6 +394,7 @@ module.exports = {
     getDailyForecast,
     filterMorningHours,
     getTodayWeather,
+    getTomorrowWeather,
     getMorningWeather,
     formatWeatherForAPL,
     // Export for testing
