@@ -100,8 +100,15 @@ const GetTodayMenuHandler = {
             // Add APL directive if device supports it and we have calendar data
             if (aplUtils.supportsAPL(handlerInput) && menuCalendar && menuCalendar.days) {
                 try {
+                    // Transform weather data for APL
+                    const aplWeatherData = weatherData && !weatherData.isFallback ? {
+                        temperature: weatherData.current.temperature,
+                        conditions: weatherData.current.conditions,
+                        icon: null // Weather.gov doesn't provide icon URLs
+                    } : null;
+
                     // Build APL data source
-                    const aplDataSource = buildMenuDataSource(menuCalendar, weatherData);
+                    const aplDataSource = buildMenuDataSource(menuCalendar, aplWeatherData);
 
                     // Add APL directive
                     const aplDirective = aplUtils.buildRenderDocumentDirective(
