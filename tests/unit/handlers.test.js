@@ -7,7 +7,14 @@ describe('Request Handlers', () => {
     beforeEach(() => {
         mockHandlerInput = {
             requestEnvelope: {
-                request: {}
+                request: {},
+                context: {
+                    System: {
+                        device: {
+                            supportedInterfaces: {}
+                        }
+                    }
+                }
             },
             responseBuilder: {
                 speak: jest.fn().mockReturnThis(),
@@ -23,9 +30,9 @@ describe('Request Handlers', () => {
             expect(LaunchRequestHandler.canHandle(mockHandlerInput)).toBe(true);
         });
 
-        it('should return welcome message', () => {
+        it('should return welcome message', async () => {
             mockHandlerInput.requestEnvelope.request.type = 'LaunchRequest';
-            LaunchRequestHandler.handle(mockHandlerInput);
+            await LaunchRequestHandler.handle(mockHandlerInput);
 
             expect(mockHandlerInput.responseBuilder.speak).toHaveBeenCalled();
             expect(mockHandlerInput.responseBuilder.reprompt).toHaveBeenCalled();
