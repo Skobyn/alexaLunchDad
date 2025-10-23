@@ -45,7 +45,8 @@ const GetTomorrowMenuHandler = {
             ]);
 
             // Calculate which day we're showing (for better UX)
-            const today = new Date();
+            // Use timezone-aware date to ensure correct "today" in Villa Park, IL
+            const today = dateUtils.getTodayInTimezone();
             const nextSchoolDay = dateUtils.getNextSchoolDay(today, 1);
 
             // Check if next school day is actually tomorrow (1 calendar day away)

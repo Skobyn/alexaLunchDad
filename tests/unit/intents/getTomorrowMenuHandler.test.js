@@ -79,10 +79,9 @@ describe('GetTomorrowMenuHandler', () => {
 
   describe('handle', () => {
     test('returns tomorrow menu when tomorrow is actual next day', async () => {
-      // Arrange - Return a date that's exactly 1 calendar day from now
-      const today = new Date();
-      const mockTomorrow = new Date(today);
-      mockTomorrow.setDate(mockTomorrow.getDate() + 1);
+      // Arrange - Mock timezone-aware "today" and "tomorrow"
+      const mockToday = new Date('2025-10-20T12:00:00Z'); // Monday in UTC
+      const mockTomorrow = new Date('2025-10-21T12:00:00Z'); // Tuesday
 
       const mockMenuData = {
         items: [{ name: 'Spaghetti', category: 'Entree' }]
@@ -90,6 +89,8 @@ describe('GetTomorrowMenuHandler', () => {
 
       const mockMainItems = [{ name: 'Spaghetti', category: 'Entree' }];
 
+      // Mock the timezone-aware date function
+      dateUtils.getTodayInTimezone.mockReturnValue(mockToday);
       dateUtils.getNextSchoolDay.mockReturnValue(mockTomorrow);
       nutrisliceService.getMenuForTomorrow.mockResolvedValue(mockMenuData);
       weatherService.getTodayWeather.mockResolvedValue({
@@ -199,10 +200,9 @@ describe('GetTomorrowMenuHandler', () => {
     });
 
     test('handles multiple items in menu', async () => {
-      // Arrange - Use actual tomorrow so the date comparison works
-      const today = new Date();
-      const mockTomorrow = new Date(today);
-      mockTomorrow.setDate(mockTomorrow.getDate() + 1);
+      // Arrange - Mock timezone-aware "today" and "tomorrow"
+      const mockToday = new Date('2025-10-20T12:00:00Z'); // Monday in UTC
+      const mockTomorrow = new Date('2025-10-21T12:00:00Z'); // Tuesday
 
       const mockMenuData = {
         items: [
@@ -217,6 +217,8 @@ describe('GetTomorrowMenuHandler', () => {
         { name: 'Burger', category: 'Entree' }
       ];
 
+      // Mock the timezone-aware date function
+      dateUtils.getTodayInTimezone.mockReturnValue(mockToday);
       dateUtils.getNextSchoolDay.mockReturnValue(mockTomorrow);
       nutrisliceService.getMenuForTomorrow.mockResolvedValue(mockMenuData);
       weatherService.getTodayWeather.mockResolvedValue({

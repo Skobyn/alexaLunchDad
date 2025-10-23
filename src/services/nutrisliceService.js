@@ -177,10 +177,12 @@ async function getMenuForDate(date) {
 async function getMenuForToday() {
     let todayDate;
 
-    if (dateUtils && dateUtils.formatDate) {
-        todayDate = dateUtils.formatDate(new Date(), 'YYYY-MM-DD');
+    if (dateUtils && dateUtils.getTodayInTimezone && dateUtils.formatDateForNutrislice) {
+        // Use timezone-aware date to get correct "today" in school's timezone
+        const today = dateUtils.getTodayInTimezone();
+        todayDate = dateUtils.formatDateForNutrislice(today);
     } else {
-    // Fallback date formatting
+    // Fallback date formatting (UTC-based)
         const now = new Date();
         todayDate = now.toISOString().split('T')[0];
     }
@@ -193,7 +195,10 @@ async function getMenuForToday() {
  * @returns {Promise<Object>} Tomorrow's menu data
  */
 async function getMenuForTomorrow() {
-    const today = new Date();
+    // Use timezone-aware date to get correct "today" in school's timezone
+    const today = dateUtils && dateUtils.getTodayInTimezone ?
+        dateUtils.getTodayInTimezone() :
+        new Date();
     let tomorrowDate;
 
     if (dateUtils && dateUtils.getNextSchoolDay) {
@@ -201,8 +206,8 @@ async function getMenuForTomorrow() {
         const holidays = constants.HOLIDAYS || [];
         const nextSchoolDay = dateUtils.getNextSchoolDay(today, 1, holidays);
 
-        if (dateUtils.formatDate) {
-            tomorrowDate = dateUtils.formatDate(nextSchoolDay, 'YYYY-MM-DD');
+        if (dateUtils.formatDateForNutrislice) {
+            tomorrowDate = dateUtils.formatDateForNutrislice(nextSchoolDay);
         } else {
             tomorrowDate = nextSchoolDay.toISOString().split('T')[0];
         }

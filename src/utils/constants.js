@@ -26,8 +26,8 @@ module.exports = {
         GRID_INFO: 2592000 // 30 days (grid coordinates don't change)
     },
 
-    // Timezone
-    TIMEZONE: process.env.SCHOOL_TIMEZONE || 'America/New_York',
+    // Timezone (Villa Park, IL is in Central Time)
+    TIMEZONE: process.env.SCHOOL_TIMEZONE || 'America/Chicago',
 
     // School schedule
     SCHOOL_DAYS: [1, 2, 3, 4, 5], // Monday-Friday
