@@ -48,13 +48,15 @@ function extractMainItems(menuData, maxItems = constants.MAX_MENU_ITEMS) {
 }
 
 /**
- * Check if category is a main category
+ * Check if category is a main category (case-insensitive)
  * @param {string} category - Food category
  * @returns {boolean}
  */
 function isMainCategory(category) {
-    const mainCategories = ['Entree', 'Main Dish', 'Pizza', 'Sandwich', 'Burger'];
-    return mainCategories.includes(category);
+    if (!category) return false;
+
+    const mainCategories = ['entree', 'main dish', 'pizza', 'sandwich', 'burger'];
+    return mainCategories.includes(category.toLowerCase());
 }
 
 /**
@@ -125,12 +127,14 @@ function sortByRelevance(items) {
     const itemsWithScores = items.map(item => {
         let score = 0;
 
-        // Higher priority categories
-        if (item.category === 'Entree') {
+        // Higher priority categories (case-insensitive)
+        const category = (item.category || '').toLowerCase();
+
+        if (category === 'entree') {
             score += 100;
-        } else if (item.category === 'Pizza' || item.category === 'Burger') {
+        } else if (category === 'pizza' || category === 'burger') {
             score += 80;
-        } else if (item.category === 'Sandwich' || item.category === 'Main Dish') {
+        } else if (category === 'sandwich' || category === 'main dish') {
             score += 70;
         }
 
