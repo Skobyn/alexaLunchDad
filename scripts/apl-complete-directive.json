@@ -1,0 +1,454 @@
+{
+  "type": "Alexa.Presentation.APL.RenderDocument",
+  "version": "2024.2",
+  "document": {
+    "type": "APL",
+    "version": "2024.2",
+    "theme": "dark",
+    "description": "Lunch Dad - 5-Day School Lunch Menu Calendar with Weather",
+    "import": [
+      {
+        "name": "alexa-layouts",
+        "version": "1.7.0"
+      }
+    ],
+    "resources": [
+      {
+        "description": "Color palette - kid-friendly with high contrast",
+        "colors": {
+          "colorPrimary": "#FFB900",
+          "colorSecondary": "#FF6B35",
+          "colorAccent": "#00D9FF",
+          "colorBackground": "#1A1A2E",
+          "colorSurface": "#252541",
+          "colorTextPrimary": "#FFFFFF",
+          "colorTextSecondary": "#E0E0E0",
+          "colorHighlight": "#4CAF50",
+          "colorToday": "#FF4081",
+          "colorBorder": "#3D3D5C"
+        }
+      },
+      {
+        "description": "Dimensions for responsive layout",
+        "dimensions": {
+          "spacingSmall": "8dp",
+          "spacingMedium": "16dp",
+          "spacingLarge": "24dp",
+          "spacingXLarge": "32dp",
+          "headerHeight": "80dp",
+          "weatherHeight": "60dp",
+          "dayCardHeight": "280dp",
+          "dayCardHeightSmall": "200dp",
+          "borderRadius": "12dp",
+          "borderWidth": "2dp"
+        }
+      },
+      {
+        "description": "Typography for readability",
+        "dimensions": {
+          "textSizeTitle": "48dp",
+          "textSizeSubtitle": "24dp",
+          "textSizeDayName": "28dp",
+          "textSizeDate": "20dp",
+          "textSizeMenuItem": "18dp",
+          "textSizeWeather": "20dp"
+        }
+      }
+    ],
+    "layouts": {
+      "DayCard": {
+        "description": "Individual day card with date and menu items",
+        "parameters": [
+          "dayName",
+          "date",
+          "menuItems",
+          "isToday"
+        ],
+        "items": [
+          {
+            "type": "Container",
+            "width": "100%",
+            "height": "${@dayCardHeight}",
+            "paddingLeft": "${@spacingMedium}",
+            "paddingRight": "${@spacingMedium}",
+            "items": [
+              {
+                "type": "Frame",
+                "width": "100%",
+                "height": "100%",
+                "backgroundColor": "${isToday ? @colorToday : @colorSurface}",
+                "borderColor": "${isToday ? @colorToday : @colorBorder}",
+                "borderWidth": "${isToday ? '4dp' : @borderWidth}",
+                "borderRadius": "${@borderRadius}",
+                "items": [
+                  {
+                    "type": "Container",
+                    "width": "100%",
+                    "height": "100%",
+                    "paddingLeft": "${@spacingMedium}",
+                    "paddingRight": "${@spacingMedium}",
+                    "paddingTop": "${@spacingMedium}",
+                    "paddingBottom": "${@spacingMedium}",
+                    "direction": "column",
+                    "alignItems": "center",
+                    "items": [
+                      {
+                        "type": "Text",
+                        "text": "${dayName}",
+                        "fontSize": "${@textSizeDayName}",
+                        "fontWeight": "bold",
+                        "color": "@colorTextPrimary",
+                        "textAlign": "center"
+                      },
+                      {
+                        "type": "Text",
+                        "text": "${date}",
+                        "fontSize": "${@textSizeDate}",
+                        "color": "@colorTextSecondary",
+                        "textAlign": "center",
+                        "paddingTop": "4dp"
+                      },
+                      {
+                        "type": "Container",
+                        "width": "100%",
+                        "height": "2dp",
+                        "backgroundColor": "${isToday ? @colorTextPrimary : @colorBorder}",
+                        "paddingTop": "${@spacingSmall}",
+                        "paddingBottom": "${@spacingSmall}"
+                      },
+                      {
+                        "type": "Container",
+                        "width": "100%",
+                        "grow": 1,
+                        "paddingTop": "${@spacingSmall}",
+                        "items": [
+                          {
+                            "type": "Sequence",
+                            "scrollDirection": "vertical",
+                            "data": "${menuItems}",
+                            "width": "100%",
+                            "height": "100%",
+                            "items": [
+                              {
+                                "type": "Container",
+                                "direction": "row",
+                                "alignItems": "start",
+                                "paddingTop": "6dp",
+                                "paddingBottom": "6dp",
+                                "items": [
+                                  {
+                                    "type": "Text",
+                                    "text": "•",
+                                    "fontSize": "${@textSizeMenuItem}",
+                                    "color": "${isToday ? @colorTextPrimary : @colorAccent}",
+                                    "paddingRight": "8dp",
+                                    "fontWeight": "bold"
+                                  },
+                                  {
+                                    "type": "Text",
+                                    "text": "${data}",
+                                    "fontSize": "${@textSizeMenuItem}",
+                                    "color": "@colorTextPrimary",
+                                    "grow": 1,
+                                    "maxLines": 2
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "WeatherOverlay": {
+        "description": "Weather information overlay",
+        "parameters": [
+          "temperature",
+          "conditions",
+          "icon"
+        ],
+        "items": [
+          {
+            "type": "Container",
+            "direction": "row",
+            "alignItems": "center",
+            "paddingLeft": "${@spacingMedium}",
+            "paddingRight": "${@spacingMedium}",
+            "paddingTop": "${@spacingSmall}",
+            "paddingBottom": "${@spacingSmall}",
+            "backgroundColor": "rgba(37, 37, 65, 0.9)",
+            "borderRadius": "8dp",
+            "items": [
+              {
+                "type": "Image",
+                "source": "${icon}",
+                "width": "40dp",
+                "height": "40dp",
+                "scale": "best-fit",
+                "when": "${icon != null && icon != ''}"
+              },
+              {
+                "type": "Container",
+                "direction": "column",
+                "paddingLeft": "${@spacingSmall}",
+                "items": [
+                  {
+                    "type": "Text",
+                    "text": "${temperature}",
+                    "fontSize": "${@textSizeWeather}",
+                    "fontWeight": "bold",
+                    "color": "@colorAccent"
+                  },
+                  {
+                    "type": "Text",
+                    "text": "${conditions}",
+                    "fontSize": "16dp",
+                    "color": "@colorTextSecondary"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "mainTemplate": {
+      "parameters": [
+        "menuData",
+        "weatherData"
+      ],
+      "items": [
+        {
+          "type": "Container",
+          "width": "100%",
+          "height": "100%",
+          "backgroundColor": "@colorBackground",
+          "direction": "column",
+          "items": [
+            {
+              "description": "Header with title and weather",
+              "type": "Container",
+              "width": "100%",
+              "height": "${@headerHeight}",
+              "direction": "row",
+              "alignItems": "center",
+              "justifyContent": "spaceBetween",
+              "paddingLeft": "${@spacingLarge}",
+              "paddingRight": "${@spacingLarge}",
+              "backgroundColor": "@colorSurface",
+              "items": [
+                {
+                  "type": "Text",
+                  "text": "🍽️ Lunch Dad",
+                  "fontSize": "${@textSizeTitle}",
+                  "fontWeight": "bold",
+                  "color": "@colorPrimary",
+                  "grow": 1
+                },
+                {
+                  "type": "WeatherOverlay",
+                  "temperature": "${weatherData.temperature}",
+                  "conditions": "${weatherData.conditions}",
+                  "icon": "${weatherData.icon}"
+                }
+              ]
+            },
+            {
+              "description": "Subtitle",
+              "type": "Text",
+              "text": "School Lunch Menu",
+              "fontSize": "${@textSizeSubtitle}",
+              "color": "@colorTextSecondary",
+              "textAlign": "center",
+              "paddingTop": "${@spacingMedium}",
+              "paddingBottom": "${@spacingMedium}"
+            },
+            {
+              "description": "5-Day Calendar Grid - Large screens (5 columns)",
+              "when": "${viewport.width >= 1280}",
+              "type": "Container",
+              "width": "100%",
+              "height": "100%",
+              "paddingLeft": "${@spacingLarge}",
+              "paddingRight": "${@spacingLarge}",
+              "paddingBottom": "${@spacingLarge}",
+              "items": [
+                {
+                  "type": "Container",
+                  "direction": "row",
+                  "justifyContent": "spaceAround",
+                  "alignItems": "start",
+                  "width": "100%",
+                  "data": "${menuData.days}",
+                  "item": {
+                    "type": "DayCard",
+                    "dayName": "${data.dayName}",
+                    "date": "${data.date}",
+                    "menuItems": "${data.menuItems}",
+                    "isToday": "${data.isToday}"
+                  }
+                }
+              ]
+            },
+            {
+              "description": "Medium screens (3-2 grid)",
+              "when": "${viewport.width >= 800 && viewport.width < 1280}",
+              "type": "Container",
+              "width": "100%",
+              "height": "100%",
+              "paddingLeft": "${@spacingMedium}",
+              "paddingRight": "${@spacingMedium}",
+              "paddingBottom": "${@spacingMedium}",
+              "items": [
+                {
+                  "type": "Sequence",
+                  "scrollDirection": "vertical",
+                  "width": "100%",
+                  "height": "100%",
+                  "data": [
+                    {
+                      "type": "row",
+                      "days": "${Array.slice(menuData.days, 0, 3)}"
+                    },
+                    {
+                      "type": "row",
+                      "days": "${Array.slice(menuData.days, 3, 5)}"
+                    }
+                  ],
+                  "items": [
+                    {
+                      "type": "Container",
+                      "direction": "row",
+                      "justifyContent": "spaceAround",
+                      "width": "100%",
+                      "paddingBottom": "${@spacingMedium}",
+                      "data": "${data.days}",
+                      "item": {
+                        "type": "DayCard",
+                        "dayName": "${data.dayName}",
+                        "date": "${data.date}",
+                        "menuItems": "${data.menuItems}",
+                        "isToday": "${data.isToday}"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "description": "Small screens (single column, scrollable)",
+              "when": "${viewport.width < 800}",
+              "type": "Container",
+              "width": "100%",
+              "height": "100%",
+              "paddingLeft": "${@spacingMedium}",
+              "paddingRight": "${@spacingMedium}",
+              "paddingBottom": "${@spacingMedium}",
+              "items": [
+                {
+                  "type": "Sequence",
+                  "scrollDirection": "vertical",
+                  "width": "100%",
+                  "height": "100%",
+                  "data": "${menuData.days}",
+                  "items": [
+                    {
+                      "type": "Container",
+                      "paddingBottom": "${@spacingMedium}",
+                      "items": [
+                        {
+                          "type": "DayCard",
+                          "dayName": "${data.dayName}",
+                          "date": "${data.date}",
+                          "menuItems": "${data.menuItems}",
+                          "isToday": "${data.isToday}"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "datasources": {
+    "menuData": {
+      "days": [
+        {
+          "dayName": "Wed",
+          "date": "Oct 22",
+          "menuItems": [
+            "Spicy Chicken Sandwich",
+            "Individual Cheese Pizza",
+            "Sun Butter and Jelly Sandwich",
+            "Fresh Fruit Cup"
+          ],
+          "isToday": true,
+          "fullDate": "2025-10-23"
+        },
+        {
+          "dayName": "Thu",
+          "date": "Oct 23",
+          "menuItems": [
+            "Spicy Chicken Sandwich",
+            "Individual Cheese Pizza",
+            "Sun Butter and Jelly Sandwich",
+            "Fresh Fruit Cup"
+          ],
+          "isToday": false,
+          "fullDate": "2025-10-24"
+        },
+        {
+          "dayName": "Fri",
+          "date": "Oct 24",
+          "menuItems": [
+            "Spicy Chicken Sandwich",
+            "Individual Cheese Pizza",
+            "Sun Butter and Jelly Sandwich",
+            "Fresh Fruit Cup"
+          ],
+          "isToday": false,
+          "fullDate": "2025-10-25"
+        },
+        {
+          "dayName": "Sat",
+          "date": "Oct 25",
+          "menuItems": [
+            "Spicy Chicken Sandwich",
+            "Individual Cheese Pizza",
+            "Sun Butter and Jelly Sandwich",
+            "Fresh Fruit Cup"
+          ],
+          "isToday": false,
+          "fullDate": "2025-10-26"
+        },
+        {
+          "dayName": "Sun",
+          "date": "Oct 26",
+          "menuItems": [
+            "Spicy Chicken Sandwich",
+            "Individual Cheese Pizza",
+            "Sun Butter and Jelly Sandwich",
+            "Fresh Fruit Cup"
+          ],
+          "isToday": false,
+          "fullDate": "2025-10-27"
+        }
+      ]
+    },
+    "weatherData": {
+      "temperature": "72°F",
+      "conditions": "Sunny",
+      "icon": "https://openweathermap.org/img/wn/01d@2x.png"
+    }
+  }
+}

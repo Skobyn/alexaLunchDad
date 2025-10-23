@@ -277,12 +277,11 @@
             "paddingBottom": "${@spacingLarge}",
             "items": [
               {
-                "type": "Sequence",
-                "scrollDirection": "horizontal",
+                "type": "Container",
+                "direction": "row",
                 "justifyContent": "spaceAround",
                 "alignItems": "start",
                 "width": "100%",
-                "height": "100%",
                 "data": "${menuData.days}",
                 "item": {
                   "type": "DayCard",

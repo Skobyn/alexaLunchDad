@@ -1,0 +1,71 @@
+{
+  "menuData": {
+    "days": [
+      {
+        "dayName": "Wed",
+        "date": "Oct 22",
+        "menuItems": [
+          "Spicy Chicken Sandwich",
+          "Individual Cheese Pizza",
+          "Sun Butter and Jelly Sandwich",
+          "Fresh Fruit Cup"
+        ],
+        "isToday": true,
+        "fullDate": "2025-10-23"
+      },
+      {
+        "dayName": "Thu",
+        "date": "Oct 23",
+        "menuItems": [
+          "Spicy Chicken Sandwich",
+          "Individual Cheese Pizza",
+          "Sun Butter and Jelly Sandwich",
+          "Fresh Fruit Cup"
+        ],
+        "isToday": false,
+        "fullDate": "2025-10-24"
+      },
+      {
+        "dayName": "Fri",
+        "date": "Oct 24",
+        "menuItems": [
+          "Spicy Chicken Sandwich",
+          "Individual Cheese Pizza",
+          "Sun Butter and Jelly Sandwich",
+          "Fresh Fruit Cup"
+        ],
+        "isToday": false,
+        "fullDate": "2025-10-25"
+      },
+      {
+        "dayName": "Sat",
+        "date": "Oct 25",
+        "menuItems": [
+          "Spicy Chicken Sandwich",
+          "Individual Cheese Pizza",
+          "Sun Butter and Jelly Sandwich",
+          "Fresh Fruit Cup"
+        ],
+        "isToday": false,
+        "fullDate": "2025-10-26"
+      },
+      {
+        "dayName": "Sun",
+        "date": "Oct 26",
+        "menuItems": [
+          "Spicy Chicken Sandwich",
+          "Individual Cheese Pizza",
+          "Sun Butter and Jelly Sandwich",
+          "Fresh Fruit Cup"
+        ],
+        "isToday": false,
+        "fullDate": "2025-10-27"
+      }
+    ]
+  },
+  "weatherData": {
+    "temperature": "72°F",
+    "conditions": "Sunny",
+    "icon": "https://openweathermap.org/img/wn/01d@2x.png"
+  }
+}
