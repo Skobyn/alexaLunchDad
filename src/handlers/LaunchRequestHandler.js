@@ -1,15 +1,43 @@
 const menuCalendarService = require('../services/menuCalendarService');
 const weatherService = require('../services/weatherService');
+const nutrisliceService = require('../services/nutrisliceService');
+const menuParser = require('../utils/menuParser');
 const aplUtils = require('../utils/aplUtils');
 const { buildMenuDataSource } = require('../apl/menuDataSource');
 const menuCalendarDocument = require('../apl/menuCalendarDocument.json');
+
+/**
+ * Check if menu contains pancakes
+ * @param {Object} menuData - Menu data from nutrislice service
+ * @returns {boolean} True if pancakes are found
+ */
+function hasPancakes(menuData) {
+    if (!menuData || !menuData.items || !Array.isArray(menuData.items)) {
+        return false;
+    }
+
+    return menuData.items.some(item =>
+        item.name && item.name.toLowerCase().includes('pancake')
+    );
+}
 
 const LaunchRequestHandler = {
     canHandle(handlerInput) {
         return handlerInput.requestEnvelope.request.type === 'LaunchRequest';
     },
     async handle(handlerInput) {
-        const speakOutput = 'Welcome to Lunch Dad! Ask me whats for lunch today or tomorrow, and I\'ll help you decide what to eat. Brayden.. we already know.. home lunch';
+        // Fetch today's menu to check for pancakes
+        let braydenMessage = 'Brayden.. we already know.. home lunch';
+        try {
+            const todayMenu = await nutrisliceService.getMenuForToday();
+            if (hasPancakes(todayMenu)) {
+                braydenMessage = 'Brayden.. maybe school lunch today?';
+            }
+        } catch (error) {
+            // If menu fetch fails, use default message
+        }
+
+        const speakOutput = `Ask me whats for lunch today or tomorrow, and I'll help you decide what to eat. ${braydenMessage}`;
 
         const responseBuilder = handlerInput.responseBuilder
             .speak(speakOutput)
