@@ -32,6 +32,38 @@ function escapeXml(text) {
         .replace(/'/g, '&apos;');
 }
 
+/**
+ * Format tomorrow's weather data into concise speech output
+ * @param {Object} weatherData - Weather data from weatherService
+ * @returns {string} - Formatted weather speech
+ */
+function formatTomorrowWeatherSpeech(weatherData) {
+    if (!weatherData || weatherData.isFallback || !weatherData.tomorrow) {
+        return '';
+    }
+
+    const dayName = weatherData.tomorrow.dayName;
+    const high = weatherData.tomorrow.temperature;
+    const conditions = weatherData.tomorrow.shortForecast.toLowerCase();
+    const forecast = weatherData.tomorrow.detailedForecast.toLowerCase();
+
+    // Build concise weather message
+    let weatherMsg = `In ${constants.WEATHER.LOCATION_NAME}, ${dayName}'s forecast is ${conditions} with a high of ${high}. `;
+
+    // Extract rain/precipitation info if present
+    const rainMatch = forecast.match(/(heavy|light|moderate)?\s*(rain|showers|precipitation|drizzle)/i);
+    const timeMatch = forecast.match(/(morning|afternoon|evening|overnight|around \d{1,2}\s*(am|pm)?)/i);
+
+    if (rainMatch) {
+        const intensity = rainMatch[1] ? rainMatch[1].toLowerCase() + ' ' : '';
+        const precipType = rainMatch[2].toLowerCase();
+        const timing = timeMatch ? ` ${timeMatch[1]}` : '';
+        weatherMsg += `${intensity.charAt(0).toUpperCase() + intensity.slice(1)}${precipType}${timing}. `;
+    }
+
+    return weatherMsg;
+}
+
 const GetTomorrowMenuHandler = {
     canHandle(handlerInput) {
         return (
@@ -98,18 +130,8 @@ const GetTomorrowMenuHandler = {
             }
 
             // Add weather context if available
-            if (weatherData && !weatherData.isFallback && weatherData.tomorrow) {
-                const dayName = weatherData.tomorrow.dayName;
-                const temp = weatherData.tomorrow.temperature;
-                const conditions = weatherData.tomorrow.shortForecast.toLowerCase();
-                const forecast = weatherData.tomorrow.detailedForecast;
-
-                // Build weather message for tomorrow's forecast
-                let weatherMsg = `${dayName}'s forecast calls for ${conditions} with a high of ${temp} degrees. `;
-                // Remove trailing period from forecast if present to avoid double periods
-                const cleanForecast = forecast.endsWith('.') ? forecast.slice(0, -1) : forecast;
-                weatherMsg += `${cleanForecast}. `;
-
+            const weatherMsg = formatTomorrowWeatherSpeech(weatherData);
+            if (weatherMsg) {
                 speakOutput = weatherMsg + speakOutput;
             }
 

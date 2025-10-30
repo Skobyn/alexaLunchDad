@@ -16,6 +16,7 @@ module.exports = {
         BASE_URL: 'https://api.weather.gov',
         LAT: process.env.WEATHER_LAT || '41.8897',  // Villa Park, IL
         LON: process.env.WEATHER_LON || '-87.9789', // Villa Park, IL
+        LOCATION_NAME: 'Villa Park',
         TIMEOUT_MS: 5000 // Increased from 3000ms to reduce timeouts
     },
 
