@@ -31,6 +31,46 @@ function escapeXml(text) {
         .replace(/'/g, '&apos;');
 }
 
+/**
+ * Format weather data into concise speech output
+ * @param {Object} weatherData - Weather data from weatherService
+ * @returns {string} - Formatted weather speech
+ */
+function formatWeatherSpeech(weatherData) {
+    if (!weatherData || weatherData.isFallback || !weatherData.current) {
+        return '';
+    }
+
+    const temp = weatherData.current.temperature;
+    const conditions = weatherData.current.conditions.toLowerCase();
+    const high = weatherData.today.high;
+    const forecast = weatherData.today.detailedForecast.toLowerCase();
+
+    // Build concise weather message
+    let weatherMsg = `In ${constants.WEATHER.LOCATION_NAME}, current temp is ${temp} with ${conditions}. `;
+
+    // Extract rain/precipitation info if present
+    const rainMatch = forecast.match(/(heavy|light|moderate)?\s*(rain|showers|precipitation|drizzle)/i);
+    const timeMatch = forecast.match(/(morning|afternoon|evening|overnight|around \d{1,2}\s*(am|pm)?)/i);
+
+    if (rainMatch) {
+        const intensity = rainMatch[1] ? rainMatch[1].toLowerCase() + ' ' : '';
+        const precipType = rainMatch[2].toLowerCase();
+        const timing = timeMatch ? ` ${timeMatch[1]}` : ' today';
+        weatherMsg += `${intensity.charAt(0).toUpperCase() + intensity.slice(1)}${precipType}${timing}. `;
+    }
+
+    // Add high temperature with timing if available
+    const highTimeMatch = forecast.match(/high\s+(?:near|around)?\s*\d+.*?(afternoon|morning|around \d{1,2}\s*(am|pm)?)/i);
+    if (highTimeMatch) {
+        weatherMsg += `High of ${high} ${highTimeMatch[1]}. `;
+    } else {
+        weatherMsg += `High of ${high}. `;
+    }
+
+    return weatherMsg;
+}
+
 const GetTodayMenuHandler = {
     canHandle(handlerInput) {
         return (
@@ -76,19 +116,8 @@ const GetTodayMenuHandler = {
             let speakOutput = `Today's lunch menu includes ${safeMenuText}.`;
 
             // Add weather context if available
-            if (weatherData && !weatherData.isFallback && weatherData.current) {
-                const currentTemp = weatherData.current.temperature;
-                const currentConditions = weatherData.current.conditions.toLowerCase();
-                const todayHigh = weatherData.today.high;
-                const forecast = weatherData.today.detailedForecast;
-
-                // Build weather message with current + forecast
-                let weatherMsg = `Currently it is ${currentTemp} degrees and ${currentConditions}. `;
-                weatherMsg += `Today's high will be ${todayHigh} degrees. `;
-                // Remove trailing period from forecast if present to avoid double periods
-                const cleanForecast = forecast.endsWith('.') ? forecast.slice(0, -1) : forecast;
-                weatherMsg += `${cleanForecast}. `;
-
+            const weatherMsg = formatWeatherSpeech(weatherData);
+            if (weatherMsg) {
                 speakOutput = weatherMsg + speakOutput;
             }
 

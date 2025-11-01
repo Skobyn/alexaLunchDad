@@ -38,18 +38,18 @@ Parameters:
 
   WeatherLat:
     Type: String
-    Description: Latitude for weather.gov API
-    Default: "39.0997"
+    Description: Latitude for weather.gov API (Villa Park, IL)
+    Default: "41.8897"
 
   WeatherLon:
     Type: String
-    Description: Longitude for weather.gov API
-    Default: "-77.0941"
+    Description: Longitude for weather.gov API (Villa Park, IL)
+    Default: "-87.9789"
 
   SchoolTimezone:
     Type: String
     Description: School timezone for date calculations
-    Default: "America/New_York"
+    Default: "America/Chicago"
 
   CacheTTLMenu:
     Type: String
