@@ -1,7 +1,6 @@
 const menuCalendarService = require('../services/menuCalendarService');
 const weatherService = require('../services/weatherService');
 const nutrisliceService = require('../services/nutrisliceService');
-const menuParser = require('../utils/menuParser');
 const aplUtils = require('../utils/aplUtils');
 const { buildMenuDataSource } = require('../apl/menuDataSource');
 const menuCalendarDocument = require('../apl/menuCalendarDocument.json');
