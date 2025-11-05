@@ -90,7 +90,7 @@ describe('LaunchRequestHandler', () => {
 
       expect(mockResponseBuilder.speak).toHaveBeenCalledTimes(1);
       expect(mockResponseBuilder.speak).toHaveBeenCalledWith(
-        expect.stringContaining('Welcome to Lunch Dad')
+        expect.stringContaining('Ask me whats for lunch today or tomorrow')
       );
     });
 

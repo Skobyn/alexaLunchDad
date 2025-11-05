@@ -119,7 +119,7 @@ describe('GetTomorrowMenuHandler', () => {
         expect.stringContaining("Tomorrow's lunch menu includes Spaghetti")
       );
       expect(handlerInput.responseBuilder.speak).toHaveBeenCalledWith(
-        expect.stringContaining("Tuesday's forecast calls for partly cloudy with a high of 50 degrees")
+        expect.stringContaining("Tuesday's forecast is partly cloudy with a high of 50")
       );
     });
 
@@ -247,7 +247,7 @@ describe('GetTomorrowMenuHandler', () => {
         expect.stringContaining("Tomorrow's lunch menu includes Pizza and Burger")
       );
       expect(handlerInput.responseBuilder.speak).toHaveBeenCalledWith(
-        expect.stringContaining("Tuesday's forecast calls for partly cloudy with a high of 50 degrees")
+        expect.stringContaining("Tuesday's forecast is partly cloudy with a high of 50")
       );
     });
   });
